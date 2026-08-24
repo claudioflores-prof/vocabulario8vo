@@ -1,0 +1,837 @@
+<title>Repaso Relámpago</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== Tokens ===== */
+  :root{
+    --bg:#F1F4F9;
+    --bg-grid-dot: rgba(47,111,237,0.16);
+    --surface:#FFFFFF;
+    --surface-2:#E7ECF5;
+    --text:#101826;
+    --text-muted:#55607A;
+    --border:#D7DEEA;
+    --accent-blue:#2F6FED;
+    --accent-blue-ink:#FFFFFF;
+    --accent-green:#1FA87A;
+    --accent-red:#E4483B;
+    --accent-amber:#C98418;
+    --shadow: 0 1px 2px rgba(16,24,38,0.04), 0 8px 24px -8px rgba(16,24,38,0.12);
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1120;
+      --bg-grid-dot: rgba(91,143,255,0.16);
+      --surface:#121B2E;
+      --surface-2:#1A2740;
+      --text:#EAF0FB;
+      --text-muted:#8C9AB8;
+      --border:#24304A;
+      --accent-blue:#5B8FFF;
+      --accent-blue-ink:#08101F;
+      --accent-green:#35D399;
+      --accent-red:#FF6B5E;
+      --accent-amber:#F0B94D;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -10px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A1120;
+    --bg-grid-dot: rgba(91,143,255,0.16);
+    --surface:#121B2E;
+    --surface-2:#1A2740;
+    --text:#EAF0FB;
+    --text-muted:#8C9AB8;
+    --border:#24304A;
+    --accent-blue:#5B8FFF;
+    --accent-blue-ink:#08101F;
+    --accent-green:#35D399;
+    --accent-red:#FF6B5E;
+    --accent-amber:#F0B94D;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -10px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(var(--bg-grid-dot) 1.4px, transparent 1.4px) 0 0/28px 28px,
+      var(--bg);
+    color:var(--text);
+    font-family:"Lexend", ui-sans-serif, system-ui, sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{
+    font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  ::selection{ background:var(--accent-blue); color:var(--accent-blue-ink); }
+
+  .stage{
+    width:100%;
+    max-width:620px;
+    position:relative;
+  }
+
+  /* ===== Decorative floating shapes (canvas theme) ===== */
+  .deco{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .deco svg{ position:absolute; opacity:0.55; }
+  .deco .d1{ top:8%; left:6%; width:86px; height:86px; animation: float-a 11s ease-in-out infinite; }
+  .deco .d2{ bottom:10%; right:7%; width:110px; height:110px; animation: float-b 13s ease-in-out infinite; }
+  .deco .d3{ top:14%; right:10%; width:60px; height:60px; animation: float-c 9s ease-in-out infinite; }
+  .deco .d4{ bottom:16%; left:9%; width:70px; height:70px; animation: spin-slow 22s linear infinite; }
+  @media (prefers-reduced-motion: reduce){
+    .deco *{ animation: none !important; }
+  }
+  @keyframes float-a{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-14px) rotate(6deg);} }
+  @keyframes float-b{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(16px) rotate(-8deg);} }
+  @keyframes float-c{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(-10px,10px);} }
+  @keyframes spin-slow{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  .card{
+    position:relative;
+    z-index:1;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:36px 32px;
+  }
+
+  /* ===== Screen: intro ===== */
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--accent-blue);
+    background:color-mix(in srgb, var(--accent-blue) 12%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent-blue) 30%, transparent);
+    padding:5px 11px;
+    border-radius:999px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent-blue); }
+
+  h1.title{
+    font-size:clamp(28px, 5vw, 36px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    line-height:1.08;
+    margin-top:16px;
+  }
+  .subtitle{
+    color:var(--text-muted);
+    font-size:15.5px;
+    margin-top:10px;
+    line-height:1.55;
+    max-width:46ch;
+  }
+
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:26px;
+  }
+  .stat{
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    border-radius:var(--radius-md);
+    padding:14px 10px;
+    text-align:center;
+  }
+  .stat .n{ font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:20px; }
+  .stat .l{ font-size:11.5px; color:var(--text-muted); margin-top:3px; letter-spacing:0.02em; }
+
+  .field-row{ display:flex; gap:10px; margin-top:24px; flex-wrap:wrap; }
+  .field{ flex:1; min-width:150px; }
+  .field label{ display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.02em; }
+  .field select, .field input{
+    width:100%;
+    font-family:"Lexend", sans-serif;
+    font-size:14.5px;
+    padding:10px 12px;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+  }
+  .field select:focus, .field input:focus{ outline:2px solid var(--accent-blue); outline-offset:1px; }
+
+  .btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family:"Lexend", sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    border-radius:999px;
+    padding:14px 26px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  .btn:focus-visible{ outline:2px solid var(--accent-blue); outline-offset:2px; }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{
+    background:var(--accent-blue);
+    color:var(--accent-blue-ink);
+    width:100%;
+    margin-top:26px;
+    box-shadow:0 10px 24px -10px color-mix(in srgb, var(--accent-blue) 70%, transparent);
+  }
+  .btn-primary:hover{ filter:brightness(1.06); }
+  .btn-ghost{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text);
+  }
+  .btn-ghost:hover{ background:var(--surface-2); }
+
+  .legend{ display:flex; gap:16px; margin-top:18px; flex-wrap:wrap; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-muted); }
+  .legend i{ width:9px; height:9px; border-radius:3px; display:inline-block; }
+
+  /* ===== Screen: quiz ===== */
+  .hidden{ display:none !important; }
+
+  .quiz-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .progress-wrap{ flex:1; }
+  .progress-label{
+    display:flex; justify-content:space-between;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;
+    color:var(--text-muted);
+    margin-bottom:7px;
+  }
+  .progress-track{
+    height:8px;
+    border-radius:999px;
+    background:var(--surface-2);
+    overflow:hidden;
+    position:relative;
+  }
+  .progress-fill{
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+    width:0%;
+    transition:width 0.35s ease;
+  }
+  .progress-dots{
+    display:flex;
+    gap:3px;
+    margin-top:6px;
+    flex-wrap:wrap;
+  }
+  .progress-dots i{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--border);
+  }
+  .progress-dots i.ok{ background:var(--accent-green); }
+  .progress-dots i.bad{ background:var(--accent-red); }
+  .progress-dots i.now{ background:var(--accent-blue); transform:scale(1.5); }
+
+  .timer{
+    position:relative;
+    width:52px; height:52px;
+    flex-shrink:0;
+  }
+  .timer svg{ transform:rotate(-90deg); width:52px; height:52px; }
+  .timer circle{ fill:none; stroke-width:5; }
+  .timer .bg{ stroke:var(--surface-2); }
+  .timer .fg{
+    stroke:var(--accent-blue);
+    stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke 0.3s ease;
+  }
+  .timer .n{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  .score-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px dashed var(--border);
+  }
+  .score-box{ display:flex; align-items:baseline; gap:6px; }
+  .score-box .v{ font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:19px; }
+  .score-box .u{ font-size:12px; color:var(--text-muted); }
+  .streak{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12.5px; font-weight:600; color:var(--accent-amber);
+    opacity:0; transition:opacity 0.2s ease;
+  }
+  .streak.show{ opacity:1; }
+
+  .qtype{
+    display:inline-block;
+    margin-top:22px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .qtext{
+    font-size:19px;
+    font-weight:600;
+    line-height:1.45;
+    margin-top:8px;
+    text-wrap:balance;
+  }
+  .qtext code{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    padding:2px 8px;
+    border-radius:7px;
+    font-size:0.92em;
+    color:var(--accent-blue);
+  }
+  .qtext .quoted{
+    display:block;
+    margin-top:10px;
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:400;
+    font-size:15px;
+    color:var(--text);
+    background:var(--surface-2);
+    border-left:3px solid var(--accent-blue);
+    padding:10px 14px;
+    border-radius:6px;
+    line-height:1.5;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+  }
+  .opt{
+    text-align:left;
+    background:var(--surface);
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:13px 16px;
+    font-size:14.5px;
+    color:var(--text);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    transition:border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  }
+  .opt .k{
+    flex-shrink:0;
+    width:22px; height:22px;
+    border-radius:7px;
+    border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+  .opt .t{ flex:1; }
+  .opt .t code{ font-family:"IBM Plex Mono",monospace; color:inherit; }
+  .opt:hover:not(:disabled){ border-color:var(--accent-blue); background:var(--surface-2); }
+  .opt:active:not(:disabled){ transform:scale(0.99); }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{ border-color:var(--accent-green); background:color-mix(in srgb, var(--accent-green) 14%, var(--surface)); }
+  .opt.correct .k{ background:var(--accent-green); border-color:var(--accent-green); color:#fff; }
+  .opt.wrong{ border-color:var(--accent-red); background:color-mix(in srgb, var(--accent-red) 12%, var(--surface)); }
+  .opt.wrong .k{ background:var(--accent-red); border-color:var(--accent-red); color:#fff; }
+  .opt.dim{ opacity:0.5; }
+
+  /* ===== Screen: results ===== */
+  .result-hero{ text-align:center; }
+  .result-score{
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:700;
+    font-size:56px;
+    letter-spacing:-0.02em;
+    margin-top:10px;
+  }
+  .result-score span{ font-size:24px; color:var(--text-muted); }
+  .result-msg{ color:var(--text-muted); margin-top:6px; font-size:14.5px; }
+
+  .bars{ margin-top:26px; display:flex; flex-direction:column; gap:14px; }
+  .bar-row .lbl{ display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; }
+  .bar-row .lbl b{ font-family:"IBM Plex Mono",monospace; font-weight:700; }
+  .bar-track{ height:10px; border-radius:999px; background:var(--surface-2); overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:999px; background:var(--accent-blue); }
+
+  .review{ margin-top:26px; }
+  .review h3{ font-size:14px; color:var(--text-muted); font-weight:600; letter-spacing:0.02em; }
+  .review-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px; }
+  .review-item{
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    border-radius:var(--radius-sm);
+    padding:10px 13px;
+  }
+  .review-item .term{ font-family:"IBM Plex Mono",monospace; font-weight:700; color:var(--accent-red); font-size:13.5px; }
+  .review-item .desc{ font-size:13px; color:var(--text-muted); margin-top:3px; line-height:1.45; }
+  .review-empty{ font-size:13.5px; color:var(--text-muted); padding:14px; text-align:center; border:1px dashed var(--border); border-radius:var(--radius-sm); }
+
+  .result-actions{ display:flex; gap:10px; margin-top:24px; }
+  .result-actions .btn{ flex:1; margin-top:0; }
+
+  footer.foot{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-muted);
+    margin-top:16px;
+    position:relative;
+    z-index:1;
+  }
+
+  @media (max-width:480px){
+    .card{ padding:26px 20px; border-radius:16px; }
+    .result-score{ font-size:44px; }
+  }
+</style>
+
+<div class="deco" aria-hidden="true">
+  <svg class="d1" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-blue)" stroke-width="3"/></svg>
+  <svg class="d2" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="10" fill="none" stroke="var(--accent-green)" stroke-width="3" stroke-dasharray="10 8"/></svg>
+  <svg class="d3" viewBox="0 0 100 100"><path d="M50 4 L61 37 L96 37 L68 58 L79 91 L50 70 L21 91 L32 58 L4 37 L39 37 Z" fill="none" stroke="var(--accent-amber)" stroke-width="3"/></svg>
+  <svg class="d4" viewBox="0 0 100 100"><line x1="8" y1="50" x2="92" y2="50" stroke="var(--accent-red)" stroke-width="3" stroke-dasharray="6 7"/><circle cx="8" cy="50" r="4" fill="var(--accent-red)"/><circle cx="92" cy="50" r="4" fill="var(--accent-red)"/></svg>
+</div>
+
+<div class="stage">
+
+  <!-- ===== INTRO ===== -->
+  <section id="screen-intro" class="card">
+    <span class="eyebrow"><span class="dot"></span> Unidad 1 · Colegio Nahuel</span>
+    <h1 class="title">Repaso Relámpago de Vocabulario</h1>
+    <p class="subtitle">30 preguntas contra el reloj sobre los conceptos y sinónimos de programación gráfica en Python. Prepárate para la prueba de agosto de 8vo básico.</p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="n">30</div><div class="l">preguntas</div></div>
+      <div class="stat"><div class="n">20s</div><div class="l">por pregunta</div></div>
+      <div class="stat"><div class="n">~15min</div><div class="l">duración</div></div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="in-nombre">Tu nombre (opcional)</label>
+        <input id="in-nombre" type="text" placeholder="Ej: Martina P." maxlength="30" />
+      </div>
+      <div class="field">
+        <label for="in-curso">Curso</label>
+        <select id="in-curso">
+          <option value="">Elegir...</option>
+          <option>8°C</option>
+          <option>8°D</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-start">Comenzar repaso →</button>
+
+    <div class="legend">
+      <span><i style="background:var(--accent-blue)"></i> Concepto</span>
+      <span><i style="background:var(--accent-green)"></i> Correcta</span>
+      <span><i style="background:var(--accent-red)"></i> Incorrecta</span>
+      <span><i style="background:var(--accent-amber)"></i> Racha</span>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section id="screen-quiz" class="card hidden">
+    <div class="quiz-top">
+      <div class="progress-wrap">
+        <div class="progress-label"><span id="q-count">Pregunta 1 / 30</span><span id="q-freq">alta frecuencia</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <div class="timer">
+        <svg viewBox="0 0 52 52">
+          <circle class="bg" cx="26" cy="26" r="22"/>
+          <circle class="fg" id="timer-ring" cx="26" cy="26" r="22"/>
+        </svg>
+        <div class="n" id="timer-n">20</div>
+      </div>
+    </div>
+
+    <div class="progress-dots" id="progress-dots"></div>
+
+    <div class="score-row">
+      <div class="score-box"><span class="v" id="score-live">0</span><span class="u">puntos</span></div>
+      <span class="streak" id="streak-badge">🔥 racha ×<span id="streak-n">0</span></span>
+    </div>
+
+    <span class="qtype" id="q-type">¿Qué significa?</span>
+    <div class="qtext" id="q-text"></div>
+
+    <div class="options" id="q-options"></div>
+  </section>
+
+  <!-- ===== RESULTS ===== -->
+  <section id="screen-results" class="card hidden">
+    <span class="eyebrow"><span class="dot"></span> Resultado final</span>
+    <div class="result-hero">
+      <div class="result-score"><span id="res-correct">0</span><span>/30 correctas</span></div>
+      <div class="result-msg" id="res-msg">—</div>
+    </div>
+
+    <div class="bars">
+      <div class="bar-row">
+        <div class="lbl"><span>Alta frecuencia</span><b id="bar-alta-lbl">0/20</b></div>
+        <div class="bar-track"><div class="bar-fill" id="bar-alta" style="background:var(--accent-blue)"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="lbl"><span>Baja frecuencia</span><b id="bar-baja-lbl">0/10</b></div>
+        <div class="bar-track"><div class="bar-fill" id="bar-baja" style="background:var(--accent-amber)"></div></div>
+      </div>
+    </div>
+
+    <div class="review">
+      <h3>Términos para repasar antes de la prueba</h3>
+      <div class="review-list" id="review-list"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-ghost" id="btn-restart">🔁 Jugar de nuevo</button>
+      <button class="btn btn-primary" id="btn-home" style="margin-top:0;">Volver al inicio</button>
+    </div>
+  </section>
+
+  <footer class="foot">Colegio Nahuel · Habilidades Digitales · 8vo básico</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ======================= DATA ======================= */
+  var TERMS = [
+    {t:"Lienzo", d:"Área cuadrada de 400x400 píxeles donde aparece el dibujo.", s:["Pantalla","Área de trabajo"], f:"alta"},
+    {t:"Coordenada X", d:"Posición horizontal de un punto en el lienzo.", s:["Abscisa","Eje horizontal"], f:"alta"},
+    {t:"Coordenada Y", d:"Posición vertical de un punto en el lienzo.", s:["Ordenada","Eje vertical"], f:"alta"},
+    {t:"Rectangulo", d:"Instrucción para dibujar una figura de cuatro lados rectos.", s:["Cuadrilátero","Cuadrado"], f:"alta"},
+    {t:"Circulo", d:"Instrucción para dibujar una figura geométrica redonda.", s:["Esfera (en 2D)","Redondela"], f:"alta"},
+    {t:"Linea", d:"Trazo recto que conecta un punto de inicio con uno de fin.", s:["Segmento","Raya"], f:"alta"},
+    {t:"Rótulo", d:"Instrucción para mostrar palabras o letras en la pantalla.", s:["Texto","Letrero"], f:"alta"},
+    {t:"relleno", d:"Propiedad que define el nombre de un color (entre comillas) para el interior.", s:["Color interno","Pintura"], f:"alta"},
+    {t:"borde", d:"Propiedad que define el nombre de un color (entre comillas) para la línea exterior.", s:["Contorno","Perímetro"], f:"alta"},
+    {t:"Estrella", d:"Figura especial con un centro y múltiples puntas salientes.", s:["Polígono estrellado","Astro"], f:"alta"},
+    {t:"gradiente", d:"Efecto visual de transición suave entre dos o más colores.", s:["Degradado","Transición de color"], f:"alta"},
+    {t:"Error", d:"Falla en el código que impide que el programa funcione.", s:["Problema","Pifia"], f:"alta"},
+    {t:"Sintaxis", d:"Reglas estrictas de escritura que exige el lenguaje.", s:["Gramática","Reglas de código"], f:"alta"},
+    {t:"Argumento", d:"Valor numérico o texto que se entrega entre los paréntesis.", s:["Parámetro","Valor de entrada"], f:"alta"},
+    {t:"Función", d:"Comando predefinido que realiza una acción específica al llamarlo.", s:["Instrucción","Procedimiento"], f:"alta"},
+    {t:"RGB", d:"Sistema numérico para crear colores mezclando luz roja, verde y azul.", s:["Código de color","Mezcla cromática"], f:"alta"},
+    {t:"comentario", d:"Nota escrita con # que ayuda al programador y el computador ignora.", s:["Anotación","Nota explicativa"], f:"alta"},
+    {t:"ancho", d:"Medida horizontal total de una figura geométrica.", s:["Amplitud","Extensión horizontal"], f:"alta"},
+    {t:"altura", d:"Medida vertical total de una figura geométrica.", s:["Elevación","Extensión vertical"], f:"alta"},
+    {t:"opacidad", d:"Propiedad que recibe un número entre 0 y 100 para controlar la transparencia.", s:["Transparencia","Visibilidad"], f:"alta"},
+    {t:"radio", d:"Distancia medida desde el centro exacto hasta el borde de un círculo o forma.", s:["Mitad del diámetro","Distancia central"], f:"baja"},
+    {t:"Ovalo", d:"Círculo que ha sido estirado de forma horizontal o vertical.", s:["Elipse","Figura ovoide"], f:"baja"},
+    {t:"anchuraDeBorde", d:"Propiedad que recibe un número mayor a 0 para engrosar el contorno.", s:["Grosor","Espesor"], f:"baja"},
+    {t:"guión", d:"Propiedad que usa Verdadero o Falso para hacer líneas punteadas.", s:["Punteado","Línea discontinua"], f:"baja"},
+    {t:"rotarÁngulo", d:"Propiedad que recibe cualquier número para girar una figura sobre su eje.", s:["Inclinación","Giro"], f:"baja"},
+    {t:"redondez", d:"Propiedad (sólo para las Estrellas) que recibe un número entre 0 y 100.", s:["Curvatura","Suavidad"], f:"baja"},
+    {t:"anchuraDeLíneas", d:"Propiedad (sólo para las Líneas) que recibe un número mayor a 0.", s:["Grosor de trazo","Espesor de línea"], f:"baja"},
+    {t:"tamaño", d:"Propiedad (sólo para los Rótulos) que recibe cualquier número más de 0.", s:["Dimensión","Escala"], f:"baja"},
+    {t:"fuente", d:"Propiedad (sólo para los Rótulos) que cambia la tipografía del texto.", s:["Tipografía","Estilo de letra"], f:"baja"},
+    {t:"puntos", d:"Propiedad que define la cantidad de vértices o puntas en una estrella.", s:["Vértices","Puntas salientes"], f:"baja"}
+  ];
+
+  var TIME_PER_Q = 20;
+  var KEYS = ["A","B","C","D"];
+
+  /* ======================= STATE ======================= */
+  var state = {
+    questions: [],
+    idx: 0,
+    score: 0,
+    streak: 0,
+    correctCount: 0,
+    altaTotal: 0, altaOk: 0,
+    bajaTotal: 0, bajaOk: 0,
+    missed: [],
+    timer: null,
+    timeLeft: TIME_PER_Q,
+    answered: false
+  };
+
+  /* ======================= HELPERS ======================= */
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function otherTerms(excludeTerm, n){
+    var pool = TERMS.filter(function(x){ return x.t !== excludeTerm; });
+    return shuffle(pool).slice(0, n);
+  }
+
+  function pickSyn(item){
+    return item.s[Math.floor(Math.random() * item.s.length)];
+  }
+
+  function buildQuestion(item){
+    var types = ["concept-desc", "concept-syn", "desc-concept", "syn-concept"];
+    var type = types[Math.floor(Math.random() * types.length)];
+    var distractors = otherTerms(item.t, 3);
+    var correct, options, qtext, quoted, label;
+
+    if (type === "concept-desc"){
+      label = "¿Qué hace o para qué sirve?";
+      qtext = '¿Qué describe o para qué sirve <code>' + item.t + '</code> en el código?';
+      correct = item.d;
+      options = distractors.map(function(x){ return x.d; }).concat([correct]);
+    } else if (type === "concept-syn"){
+      label = "Sinónimo";
+      qtext = '¿Cuál de estas es sinónimo de <code>' + item.t + '</code>?';
+      correct = pickSyn(item);
+      options = distractors.map(function(x){ return pickSyn(x); }).concat([correct]);
+    } else if (type === "desc-concept"){
+      label = "Identifica el concepto";
+      qtext = '¿Qué concepto o instrucción corresponde a esta descripción?<span class="quoted">"' + item.d + '"</span>';
+      correct = item.t;
+      options = distractors.map(function(x){ return x.t; }).concat([correct]);
+    } else {
+      var syn = pickSyn(item);
+      label = "Identifica el concepto";
+      qtext = '¿A qué concepto o instrucción se refiere la palabra <span class="quoted">"' + syn + '"</span>?';
+      correct = item.t;
+      options = distractors.map(function(x){ return x.t; }).concat([correct]);
+    }
+
+    options = shuffle(options);
+    var isCode = (type === "desc-concept" || type === "syn-concept");
+
+    return {
+      term: item.t, desc: item.d, freq: item.f,
+      label: label, qtext: qtext,
+      correct: correct, options: options, isCode: isCode
+    };
+  }
+
+  /* ======================= DOM ======================= */
+  var el = {};
+  ["screen-intro","screen-quiz","screen-results","btn-start","btn-restart","btn-home",
+   "in-nombre","in-curso","q-count","q-freq","progress-fill","progress-dots",
+   "timer-ring","timer-n","score-live","streak-badge","streak-n",
+   "q-type","q-text","q-options",
+   "res-correct","res-msg","bar-alta","bar-alta-lbl","bar-baja","bar-baja-lbl",
+   "review-list"
+  ].forEach(function(id){ el[id.replace(/-([a-z])/g, function(m,c){return c.toUpperCase();})] = document.getElementById(id); });
+
+  var TIMER_CIRC = 2 * Math.PI * 22;
+  el.timerRing.style.strokeDasharray = TIMER_CIRC.toFixed(2);
+
+  /* ======================= FLOW ======================= */
+  function startQuiz(){
+    state.questions = shuffle(TERMS).map(buildQuestion);
+    state.idx = 0;
+    state.score = 0; state.streak = 0; state.correctCount = 0;
+    state.altaTotal = TERMS.filter(function(x){return x.f==="alta";}).length;
+    state.bajaTotal = TERMS.filter(function(x){return x.f==="baja";}).length;
+    state.altaOk = 0; state.bajaOk = 0;
+    state.missed = [];
+
+    el.progressDots.innerHTML = "";
+    for (var i = 0; i < state.questions.length; i++){
+      var dot = document.createElement("i");
+      dot.dataset.i = i;
+      el.progressDots.appendChild(dot);
+    }
+
+    el.screenIntro.classList.add("hidden");
+    el.screenResults.classList.add("hidden");
+    el.screenQuiz.classList.remove("hidden");
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    state.answered = false;
+    var q = state.questions[state.idx];
+    el.qCount.textContent = "Pregunta " + (state.idx + 1) + " / " + state.questions.length;
+    el.qFreq.textContent = q.freq === "alta" ? "alta frecuencia" : "baja frecuencia";
+    el.progressFill.style.width = (state.idx / state.questions.length * 100) + "%";
+    el.qType.textContent = q.label;
+    el.qText.innerHTML = q.qtext;
+    el.scoreLive.textContent = state.score;
+
+    Array.prototype.forEach.call(el.progressDots.children, function(dot, i){
+      dot.classList.remove("now");
+      if (i === state.idx) dot.classList.add("now");
+    });
+
+    el.qOptions.innerHTML = "";
+    q.options.forEach(function(opt, i){
+      var btn = document.createElement("button");
+      btn.className = "opt";
+      btn.innerHTML = '<span class="k">' + KEYS[i] + '</span><span class="t">' +
+        (q.isCode ? '<code>' + opt + '</code>' : opt) + '</span>';
+      btn.addEventListener("click", function(){ selectAnswer(opt, btn); });
+      el.qOptions.appendChild(btn);
+    });
+
+    startTimer();
+  }
+
+  function startTimer(){
+    clearInterval(state.timer);
+    state.timeLeft = TIME_PER_Q;
+    updateTimerUI();
+    state.timer = setInterval(function(){
+      state.timeLeft--;
+      updateTimerUI();
+      if (state.timeLeft <= 0){
+        clearInterval(state.timer);
+        selectAnswer(null, null);
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI(){
+    el.timerN.textContent = state.timeLeft;
+    var frac = state.timeLeft / TIME_PER_Q;
+    el.timerRing.style.strokeDashoffset = (TIMER_CIRC * (1 - frac)).toFixed(2);
+    var color = frac > 0.5 ? "var(--accent-blue)" : (frac > 0.22 ? "var(--accent-amber)" : "var(--accent-red)");
+    el.timerRing.style.stroke = color;
+  }
+
+  function selectAnswer(chosen, btnEl){
+    if (state.answered) return;
+    state.answered = true;
+    clearInterval(state.timer);
+
+    var q = state.questions[state.idx];
+    var isCorrect = chosen === q.correct;
+
+    Array.prototype.forEach.call(el.qOptions.children, function(btn){
+      btn.disabled = true;
+      var label = btn.querySelector(".t").textContent;
+      if (label === q.correct){
+        btn.classList.add("correct");
+      } else if (btn === btnEl){
+        btn.classList.add("wrong");
+      } else {
+        btn.classList.add("dim");
+      }
+    });
+
+    var dot = el.progressDots.children[state.idx];
+
+    if (isCorrect){
+      state.correctCount++;
+      state.streak++;
+      var timeBonus = Math.round((state.timeLeft / TIME_PER_Q) * 10);
+      var streakBonus = state.streak >= 3 ? 5 : 0;
+      state.score += 10 + timeBonus + streakBonus;
+      dot.className = "ok";
+      if (q.freq === "alta") state.altaOk++; else state.bajaOk++;
+      if (state.streak >= 2){
+        el.streakBadge.classList.add("show");
+        el.streakN.textContent = state.streak;
+      }
+    } else {
+      state.streak = 0;
+      el.streakBadge.classList.remove("show");
+      dot.className = "bad";
+      state.missed.push(q);
+    }
+
+    el.scoreLive.textContent = state.score;
+
+    setTimeout(function(){
+      state.idx++;
+      if (state.idx >= state.questions.length){
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }, 1200);
+  }
+
+  function showResults(){
+    el.screenQuiz.classList.add("hidden");
+    el.screenResults.classList.remove("hidden");
+
+    el.resCorrect.textContent = state.correctCount;
+    var pct = Math.round((state.correctCount / state.questions.length) * 100);
+    var msg;
+    if (pct >= 90) msg = "¡Excelente! Dominas el vocabulario. 🏆";
+    else if (pct >= 75) msg = "Muy bien. Repasa los términos marcados abajo. 👍";
+    else if (pct >= 50) msg = "Vas por buen camino, repasa antes de la prueba. 📘";
+    else msg = "Conviene repasar con calma la lista de vocabulario. 💪";
+    el.resMsg.textContent = msg + "  ·  " + state.score + " puntos";
+
+    var altaPct = Math.round((state.altaOk / state.altaTotal) * 100);
+    var bajaPct = Math.round((state.bajaOk / state.bajaTotal) * 100);
+    el.barAlta.style.width = altaPct + "%";
+    el.barAltaLbl.textContent = state.altaOk + "/" + state.altaTotal;
+    el.barBaja.style.width = bajaPct + "%";
+    el.barBajaLbl.textContent = state.bajaOk + "/" + state.bajaTotal;
+
+    el.reviewList.innerHTML = "";
+    if (state.missed.length === 0){
+      var empty = document.createElement("div");
+      empty.className = "review-empty";
+      empty.textContent = "¡Sin errores! No hay términos pendientes de repaso.";
+      el.reviewList.appendChild(empty);
+    } else {
+      var seen = {};
+      state.missed.forEach(function(q){
+        if (seen[q.term]) return;
+        seen[q.term] = true;
+        var item = document.createElement("div");
+        item.className = "review-item";
+        item.innerHTML = '<div class="term">' + q.term + '</div><div class="desc">' + q.desc + '</div>';
+        el.reviewList.appendChild(item);
+      });
+    }
+  }
+
+  el.btnStart.addEventListener("click", startQuiz);
+  el.btnRestart.addEventListener("click", startQuiz);
+  el.btnHome.addEventListener("click", function(){
+    el.screenResults.classList.add("hidden");
+    el.screenIntro.classList.remove("hidden");
+  });
+
+})();
+</script>
