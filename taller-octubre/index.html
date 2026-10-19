@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Taller del Analista · 8° Básico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F4F9; --bg-dot:rgba(47,111,237,0.14);
+    --surface:#FFFFFF; --surface-2:#E7ECF5;
+    --text:#101826; --muted:#55607A; --border:#D7DEEA;
+    --blue:#2F6FED; --blue-ink:#FFFFFF; --blue-soft:rgba(47,111,237,0.10);
+    --green:#1FA87A; --green-soft:rgba(31,168,122,0.14);
+    --red:#E4483B; --red-soft:rgba(228,72,59,0.12);
+    --amber:#C98418; --amber-soft:rgba(201,132,24,0.14);
+    --shadow:0 1px 2px rgba(16,24,38,0.04), 0 8px 24px -8px rgba(16,24,38,0.12);
+    --r-lg:20px; --r-md:14px; --r-sm:9px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1120; --bg-dot:rgba(91,143,255,0.14);
+      --surface:#121B2E; --surface-2:#1A2740;
+      --text:#EAF0FB; --muted:#8C9AB8; --border:#24304A;
+      --blue:#5B8FFF; --blue-ink:#08101F; --blue-soft:rgba(91,143,255,0.16);
+      --green:#35D399; --green-soft:rgba(53,211,153,0.16);
+      --red:#FF6B5E; --red-soft:rgba(255,107,94,0.16);
+      --amber:#F0B94D; --amber-soft:rgba(240,185,77,0.16);
+      --shadow:0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -10px rgba(0,0,0,0.55);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(var(--bg-dot) 1.4px, transparent 1.4px) 0 0/28px 28px, var(--bg);
+    color:var(--text); font-family:"Lexend", ui-sans-serif, system-ui, sans-serif;
+    min-height:100vh; padding:18px 16px 56px; -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  h1,h2,h3,p{margin:0;} h1,h2,h3{text-wrap:balance;}
+  .mono{font-family:"IBM Plex Mono", ui-monospace, monospace;}
+  .hidden{display:none !important;}
+  .wrap{max-width:720px;margin:0 auto;}
+  button{font:inherit;color:inherit;cursor:pointer;}
+
+  /* encabezado y progreso */
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .brand .tag{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;}
+  .stars{font-weight:700;font-size:15px;padding:5px 12px;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);}
+  .steps{display:flex;gap:8px;margin-bottom:16px;}
+  .step{flex:1;min-width:0;padding:9px 6px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);text-align:center;font-size:12px;font-weight:600;color:var(--muted);transition:all .25s;}
+  .step .n{display:block;font-size:18px;line-height:1.2;}
+  .step.cur{border-color:var(--blue);color:var(--text);box-shadow:0 0 0 4px var(--blue-soft);}
+  .step.done{border-color:var(--green);background:var(--green-soft);color:var(--text);}
+  .step:disabled{opacity:.55;cursor:not-allowed;}
+
+  .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow);margin-bottom:14px;}
+  .card h2{font-size:22px;font-weight:800;margin-bottom:6px;}
+  .card h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+  .lead{color:var(--muted);font-size:15px;}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;}
+
+  .btn{border:none;border-radius:12px;padding:12px 18px;font-weight:700;font-size:15px;background:var(--blue);color:var(--blue-ink);transition:transform .08s, opacity .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:var(--surface-2);color:var(--text);}
+  .btn.green{background:var(--green);color:#fff;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;}
+
+  /* tabla de datos */
+  .data{border-collapse:collapse;width:100%;font-size:14px;margin:12px 0 4px;}
+  .data th,.data td{border:1px solid var(--border);padding:7px 10px;text-align:left;}
+  .data th{background:var(--surface-2);font-weight:700;}
+  .data td.num{font-family:"IBM Plex Mono",monospace;text-align:right;}
+  .caption{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .scroll{overflow-x:auto;}
+
+  /* completar */
+  .cloze-item{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px dashed var(--border);}
+  .cloze-item:first-child{border-top:none;}
+  .cloze-item .idx{flex:none;width:26px;height:26px;border-radius:99px;background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:13px;display:grid;place-items:center;margin-top:2px;}
+  .cloze-item .txt{flex:1;font-size:15.5px;}
+  .gap{display:inline-block;min-width:130px;max-width:100%;padding:3px 10px;margin:0 2px;border-radius:9px;border:2px dashed var(--blue);background:var(--blue-soft);color:var(--text);font-weight:700;vertical-align:baseline;text-align:center;}
+  .gap.active{box-shadow:0 0 0 4px var(--blue-soft);}
+  .gap.filled{border-style:solid;}
+  .gap.ok{border-color:var(--green);background:var(--green-soft);}
+  .gap.bad{border-color:var(--red);background:var(--red-soft);}
+  .why{font-size:13.5px;color:var(--muted);margin-top:6px;}
+  .bank{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;padding:12px;border-radius:var(--r-md);background:var(--surface-2);}
+  .chip-btn{border:1.5px solid var(--border);background:var(--surface);padding:7px 12px;border-radius:99px;font-weight:600;font-size:14px;}
+  .chip-btn:hover:not(:disabled){border-color:var(--blue);}
+  .chip-btn:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;}
+
+  /* redacción */
+  textarea{width:100%;min-height:190px;resize:vertical;padding:14px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:16px;line-height:1.55;}
+  textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+  .terms{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+  .term{padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--muted);transition:all .25s;}
+  .term.used{border-color:var(--green);background:var(--green-soft);color:var(--text);}
+  .term.syn{border-color:var(--blue);background:var(--blue-soft);color:var(--text);}
+  .term small{font-weight:500;opacity:.8;}
+  .meter{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:6px;}
+  .meter i{display:block;height:100%;width:0;background:var(--blue);border-radius:99px;transition:width .25s, background .25s;}
+  .meter.full i{background:var(--green);}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px;}
+  details{margin:10px 0;border:1.5px solid var(--border);border-radius:var(--r-md);padding:10px 14px;background:var(--surface);}
+  summary{cursor:pointer;font-weight:600;font-size:14.5px;}
+  details ul{margin:8px 0 2px;padding-left:20px;font-size:14px;color:var(--muted);}
+  .feedback{margin-top:12px;padding:12px 14px;border-radius:var(--r-md);font-size:14.5px;}
+  .feedback.good{background:var(--green-soft);border:1.5px solid var(--green);}
+  .feedback.warn{background:var(--amber-soft);border:1.5px solid var(--amber);}
+  .feedback ul{margin:6px 0 0;padding-left:20px;}
+  .check{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:14.5px;}
+  .check input{margin-top:5px;width:18px;height:18px;accent-color:var(--green);}
+
+  /* reformular */
+  .refo-item{padding:14px 0;border-top:1px dashed var(--border);}
+  .refo-item:first-child{border-top:none;}
+  .refo-item p{font-size:15.5px;}
+  mark{background:var(--amber-soft);color:var(--text);padding:1px 6px;border-radius:6px;font-weight:700;border:1px solid var(--amber);}
+  .refo-in{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .refo-in input{flex:1;min-width:180px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;}
+  .refo-in input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+  .refo-in input.ok{border-color:var(--green);background:var(--green-soft);}
+  .refo-in input.bad{border-color:var(--red);background:var(--red-soft);}
+  .refo-msg{font-size:13.5px;margin-top:6px;color:var(--muted);}
+  .refo-msg b{color:var(--text);}
+
+  .final-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0;}
+  .final-grid div{padding:14px;border-radius:var(--r-md);background:var(--surface-2);text-align:center;font-size:14px;}
+  .final-grid b{display:block;font-size:22px;}
+  .pop{animation:pop .35s ease;} @keyframes pop{0%{transform:scale(.96);opacity:.4}100%{transform:scale(1);opacity:1}}
+  @media (prefers-reduced-motion: reduce){.pop{animation:none;} *{transition:none !important;}}
+  @media (max-width:520px){body{padding:12px 10px 48px;} .card{padding:15px;} .step{font-size:11px;} .gap{min-width:100px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <span class="tag">Habilidades Digitales · 8° Básico · Estadística con Hojas de cálculo</span>
+    <span class="stars" id="starsBox">★ 0</span>
+  </div>
+  <div class="steps" id="steps"></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ============================== DATOS ============================== */
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const R = s => new RegExp(s, 'i');
+
+const MISSIONS = [
+ { id:1, icon:'🧾', title:'El kiosco del colegio',
+   story:'El centro de estudiantes quiere saber qué se vende más en el kiosco. Tú registraste las ventas de una semana y ahora debes preparar la parte inicial del informe.',
+   table:{ headers:['Producto','Unidades vendidas'], rows:[['Jugo','42'],['Sándwich','35'],['Galleta','58'],['Fruta','12'],['Agua','30']] },
+   caption:'Ventas del kiosco en una semana (datos inventados para el taller).',
+   terms:[
+    {label:'Hoja de cálculo', re:R('\\bhojas? de calculo\\b'), syn:[{label:'Planilla',re:R('\\bplanillas?\\b')},{label:'Libro de cálculo',re:R('\\blibros? de calculo\\b')}]},
+    {label:'Celda', re:R('\\bceldas?\\b'), syn:[{label:'Casilla',re:R('\\bcasillas?\\b')},{label:'Recuadro',re:R('\\brecuadros?\\b')}]},
+    {label:'Fórmula', re:R('\\bformulas?\\b'), syn:[{label:'Expresión',re:R('\\bexpresion(es)?\\b')},{label:'Cálculo automático',re:R('\\bcalculos? automaticos?\\b')}]},
+    {label:'Función', re:R('\\bfuncion(es)?\\b'), syn:[{label:'Comando',re:R('\\bcomandos?\\b')},{label:'Operación predefinida',re:R('\\boperacion(es)? predefinidas?\\b')}]},
+    {label:'Ordenar', re:R('\\bordena(r|rlos|rlas|n|mos|ron|ndo|do|dos|da|das)?\\b|\\bordeno\\b|\\bordene(n|mos)?\\b'), syn:[{label:'Clasificar',re:R('\\bclasific(ar|a|an|o|amos|ado|ados|ada|adas|aron|ando)\\b')},{label:'Jerarquizar',re:R('\\bjerarquiz')}]}
+   ],
+   bank:['Hoja de cálculo','Celda','Fórmula','Función','Ordenar','Filtrar','Rango de celdas'],
+   items:[
+    {pre:'Para registrar las ventas del kiosco abrí una ', ans:'Hoja de cálculo', post:' de Google.', why:'Es el programa donde se organizan datos en filas y columnas.'},
+    {pre:'Cada dato queda guardado en una ', ans:'Celda', post:', que se ubica por su columna y su fila (por ejemplo, B3).', why:'Una celda es una sola casilla; un rango serían varias.'},
+    {pre:'Escribí =B2+B3 para sumar dos productos: eso es una ', ans:'Fórmula', post:'.', why:'Las fórmulas empiezan con el signo = y hacen un cálculo.'},
+    {pre:'La ', ans:'Función', post:' SUMA ya viene incluida en la hoja y suma muchos números a la vez.', why:'Una función es una operación predefinida que la hoja ya conoce.'},
+    {pre:'Para ver primero el producto más vendido voy a ', ans:'Ordenar', post:' los datos de mayor a menor.', why:'Ordenar reorganiza los datos; filtrar, en cambio, solo muestra algunos.'}
+   ],
+   prompt:'Escribe un texto breve para el centro de estudiantes que explique <b>cómo usarías la hoja de cálculo</b> para registrar las ventas del kiosco, calcular el total y mostrar primero el producto más vendido.',
+   starters:['Primero, abrí…','Para calcular el total…','Después, para ver cuál se vende más…','Finalmente, el resultado muestra…'] },
+
+ { id:2, icon:'📱', title:'La encuesta del curso',
+   story:'Preguntaste a 40 estudiantes de 8° cuál es la red social que más usan. Ahora debes organizar las respuestas para mostrarlas de forma clara.',
+   table:{ headers:['Red social','Estudiantes'], rows:[['Instagram','14'],['TikTok','12'],['WhatsApp','9'],['YouTube','5']] },
+   caption:'Respuestas de 40 estudiantes (datos inventados para el taller).',
+   terms:[
+    {label:'Variable', re:R('\\bvariables?\\b'), syn:[{label:'Característica',re:R('\\bcaracteristicas?\\b')},{label:'Atributo',re:R('\\batributos?\\b')}]},
+    {label:'Frecuencia absoluta', re:R('\\bfrecuencias? absolutas?\\b'), syn:[{label:'Conteo',re:R('\\bconteos?\\b')},{label:'Cantidad de casos',re:R('\\bcantidad(es)? de casos\\b')}]},
+    {label:'Frecuencia relativa', re:R('\\bfrecuencias? relativas?\\b'), syn:[{label:'Proporción',re:R('\\bproporcion(es)?\\b')},{label:'Fracción del total',re:R('\\bfraccion(es)? del total\\b')}]},
+    {label:'Tabla de frecuencias', re:R('\\btablas? de frecuencias?\\b'), syn:[{label:'Cuadro de conteo',re:R('\\bcuadros? de conteos?\\b')},{label:'Distribución de frecuencias',re:R('\\bdistribucion(es)? de frecuencias?\\b')}]},
+    {label:'Gráfico de barras', re:R('\\bgraficos? de barras\\b'), syn:[{label:'Diagrama de barras',re:R('\\bdiagramas? de barras\\b')},{label:'Gráfico de columnas',re:R('\\bgraficos? de columnas\\b')}]}
+   ],
+   bank:['Variable','Frecuencia absoluta','Frecuencia relativa','Tabla de frecuencias','Gráfico de barras','Gráfico circular','Fuente de datos'],
+   items:[
+    {pre:'La red social que más usa cada estudiante es la ', ans:'Variable', post:' que estamos estudiando.', why:'Una variable es la característica que se mide en cada persona o cosa.'},
+    {pre:'TikTok lo eligieron 12 estudiantes. Ese conteo es la ', ans:'Frecuencia absoluta', post:'.', why:'La frecuencia absoluta es la cantidad de veces que aparece un dato.'},
+    {pre:'12 de 40 estudiantes es 0,30, o sea 30 %: esa fracción del total es la ', ans:'Frecuencia relativa', post:'.', why:'La frecuencia relativa compara el conteo con el total.'},
+    {pre:'Ordené los conteos y los porcentajes en una ', ans:'Tabla de frecuencias', post:' de tres columnas.', why:'Reúne cada categoría con sus frecuencias.'},
+    {pre:'Para comparar la altura de cada categoría dibujé un ', ans:'Gráfico de barras', post:' con los datos de la tabla.', why:'Cada barra representa una categoría; su altura es su frecuencia.'}
+   ],
+   prompt:'Escribe un texto breve que explique <b>cómo organizarías los datos de la encuesta</b> y cómo los mostrarías para que cualquiera entienda cuál es la red social más usada.',
+   starters:['Lo primero es identificar…','Luego, para saber cuántos eligieron cada opción…','Para comparar con el total…','Para mostrarlo visualmente…'] },
+
+ { id:3, icon:'🚌', title:'El viaje al colegio',
+   story:'Anotaste cuántos minutos demoran 11 estudiantes en llegar al colegio. Necesitas resumir todos esos números con unos pocos valores.',
+   table:{ headers:['Estudiante','1','2','3','4','5','6','7','8','9','10','11'], rows:[['Minutos','8','10','10','12','15','15','15','18','20','20','75']] },
+   caption:'Tiempo de viaje en minutos (datos inventados para el taller). Suma total: 218.',
+   terms:[
+    {label:'Media', re:R('\\bmedia\\b'), syn:[{label:'Promedio',re:R('\\bpromedios?\\b')},{label:'Valor medio',re:R('\\bvalor(es)? medios?\\b')}]},
+    {label:'Mediana', re:R('\\bmedianas?\\b'), syn:[{label:'Valor central',re:R('\\bvalor(es)? centra(l|les)\\b')},{label:'Punto medio',re:R('\\bpuntos? medios?\\b')}]},
+    {label:'Moda', re:R('\\bmodas?\\b'), syn:[{label:'Valor más frecuente',re:R('\\bvalor(es)? mas frecuentes?\\b')},{label:'Dato más repetido',re:R('\\bdatos? mas repetidos?\\b')}]},
+    {label:'Rango', re:R('\\brangos?\\b'), syn:[{label:'Recorrido',re:R('\\brecorridos?\\b')},{label:'Amplitud',re:R('\\bamplitud(es)?\\b')}]},
+    {label:'Valor atípico', re:R('\\bvalor(es)? atipicos?\\b'), syn:[{label:'Dato extremo',re:R('\\bdatos? extremos?\\b')},{label:'Valor anómalo',re:R('\\bvalor(es)? anomalos?\\b')}]}
+   ],
+   bank:['Media','Mediana','Moda','Rango','Valor atípico','Cuartil','Medida de posición'],
+   items:[
+    {pre:'Sumé todos los tiempos (218 min) y dividí por 11: obtuve la ', ans:'Media', post:', cerca de 19,8 minutos.', why:'La media se calcula sumando todo y dividiendo por la cantidad de datos.'},
+    {pre:'Al ordenar los tiempos, el que queda justo al medio (15 min) es la ', ans:'Mediana', post:'.', why:'La mediana es el valor central de los datos ordenados.'},
+    {pre:'El tiempo que más se repite, 15 minutos, es la ', ans:'Moda', post:'.', why:'La moda es el dato con mayor frecuencia.'},
+    {pre:'La diferencia entre el viaje más largo (75) y el más corto (8) es el ', ans:'Rango', post:': 67 minutos.', why:'El rango mide cuán separados están el mayor y el menor.'},
+    {pre:'El viaje de 75 minutos está muy lejos del resto: es un ', ans:'Valor atípico', post:' que tira la media hacia arriba.', why:'Un valor atípico se aleja mucho de los demás y puede distorsionar la media.'}
+   ],
+   prompt:'Escribe un texto breve que <b>interprete el tiempo de viaje del curso</b>: qué valor te parece más representativo y qué pasa con el viaje de 75 minutos.',
+   starters:['Si miro los datos en conjunto…','Un valor que se repite mucho es…','Sin embargo, hay un viaje que…','Por eso, para describir al grupo conviene…'] }
+];
+
+const REFO = [
+ {sent:'Seleccioné un <mark>rango de celdas</mark> para calcular la suma de todas las ventas.', acc:['seleccion','bloque de celdas'], show:['Selección','Bloque de celdas']},
+ {sent:'Puse el signo $ en la <mark>referencia absoluta</mark> para que la fórmula no se mueva al copiarla.', acc:['direccion fija','celda anclada'], show:['Dirección fija','Celda anclada']},
+ {sent:'Voy a <mark>filtrar</mark> la tabla para ver solo a los estudiantes de 8°C.', acc:['seleccionar','depurar'], show:['Seleccionar','Depurar']},
+ {sent:'El <mark>gráfico circular</mark> muestra qué parte del total ocupa cada opción.', acc:['grafico de torta','diagrama de sectores'], show:['Gráfico de torta','Diagrama de sectores']},
+ {sent:'Ese <mark>gráfico engañoso</mark> cortaba el eje para exagerar las diferencias entre las barras.', acc:['grafico manipulado','representacion distorsionada'], show:['Gráfico manipulado','Representación distorsionada']},
+ {sent:'Antes de usar los datos, anota su <mark>fuente de datos</mark> para saber si es confiable.', acc:['origen','procedencia'], show:['Origen','Procedencia']},
+ {sent:'Calcular el promedio sirve porque es una <mark>medida de tendencia central</mark>.', acc:['valor representativo','medida de centro'], show:['Valor representativo','Medida de centro']},
+ {sent:'El cuartil y el percentil son ejemplos de <mark>medida de posición</mark>.', acc:['ubicacion relativa','medida de orden'], show:['Ubicación relativa','Medida de orden']},
+ {sent:'El primer <mark>cuartil</mark> deja bajo él al 25 % de los datos.', acc:['punto de corte en cuartos','percentil 25','percentil 25/50/75'], show:['Punto de corte en cuartos','Percentil 25/50/75']},
+ {sent:'El <mark>percentil</mark> 90 deja bajo él al 90 % de los datos.', acc:['centil','posicion porcentual'], show:['Centil','Posición porcentual']}
+];
+
+/* ============================== ESTADO ============================== */
+const S = {
+  cur:0,            // 0..2 misiones, 3 reformular, 4 final
+  phase:{0:'A',1:'A',2:'A'},
+  doneA:[false,false,false], doneB:[false,false,false], doneR:false,
+  starsA:[0,0,0], starsB:[0,0,0], starsR:0,
+  attemptsA:[0,0,0],
+  fill:[[],[],[]],  // respuestas del completar
+  active:[0,0,0],
+  checked:[false,false,false],
+  text:['','',''],
+  refo:[], refoTries:[]
+};
+const MIN_CHARS = 200;
+function shuffled(arr){
+  const idx=arr.map((_,k)=>k); let a;
+  do{ a=idx.slice(); for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]];} }
+  while(a.every((v,k)=>v===k));
+  return a.map(k=>arr[k]);
+}
+const MIX={items:[],bank:[]};
+function getItems(i){ if(!MIX.items[i]) MIX.items[i]=shuffled(MISSIONS[i].items); return MIX.items[i]; }
+function getBank(i){ if(!MIX.bank[i]) MIX.bank[i]=shuffled(MISSIONS[i].bank); return MIX.bank[i]; }
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function totalStars(){ return S.starsA.reduce((a,b)=>a+b,0)+S.starsB.reduce((a,b)=>a+b,0)+S.starsR; }
+function unlocked(i){ if(i<=2) return i===0 || (S.doneA[i-1]&&S.doneB[i-1]); if(i===3) return S.doneB[2]; return S.doneR; }
+function missionDone(i){ return i<=2 ? (S.doneA[i]&&S.doneB[i]) : i===3 ? S.doneR : false; }
+
+/* ============================== PASOS ============================== */
+function renderSteps(){
+  const names=['Kiosco','Encuesta','Viaje','Traductor'];
+  const icons=['🧾','📱','🚌','🔁'];
+  $('steps').innerHTML = names.map((n,i)=>{
+    const cls = (S.cur===i?'cur ':'') + (missionDone(i)?'done':'');
+    return `<button class="step ${cls}" data-go="${i}" ${unlocked(i)?'':'disabled'}><span class="n">${missionDone(i)?'✓':icons[i]}</span>${n}</button>`;
+  }).join('');
+  $('steps').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{S.cur=+b.dataset.go;render();});
+  $('starsBox').textContent='★ '+totalStars();
+}
+
+/* ============================== MISIÓN (A/B) ============================== */
+function tableHTML(t){
+  return `<div class="scroll"><table class="data"><thead><tr>${t.headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${
+    t.rows.map(r=>`<tr>${r.map((c,j)=>`<td class="${/^[\d.,]+$/.test(c)?'num':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+function renderMission(i){
+  const m = MISSIONS[i];
+  const ph = S.phase[i];
+  let html = `<section class="card pop">
+    <div class="kicker">Misión ${m.id} de 4</div>
+    <h2>${m.icon} ${m.title}</h2>
+    <p class="lead">${m.story}</p>
+    ${tableHTML(m.table)}<p class="caption">${m.caption}</p>
+  </section>`;
+  html += ph==='A' ? clozeHTML(i) : writeHTML(i);
+  $('stage').innerHTML = html;
+  if(ph==='A') bindCloze(i); else bindWrite(i);
+}
+
+/* ---- Fase A: completar ---- */
+function clozeHTML(i){
+  const m=MISSIONS[i]; const its=getItems(i);
+  if(!S.fill[i].length) S.fill[i]=its.map(()=>null);
+  const used = new Set(S.fill[i].filter(Boolean));
+  const items = its.map((it,k)=>{
+    const v=S.fill[i][k]; const st = S.checked[i] && v ? (v===it.ans?'ok':'bad') : '';
+    return `<div class="cloze-item"><span class="idx">${k+1}</span><div class="txt">${esc(it.pre)}<button class="gap ${v?'filled':''} ${S.active[i]===k?'active':''} ${st}" data-gap="${k}">${v?esc(v):'&nbsp;&nbsp;&nbsp;?&nbsp;&nbsp;&nbsp;'}</button>${esc(it.post)}
+      ${S.checked[i]&&v===it.ans?`<div class="why">✓ ${esc(it.why)}</div>`:''}
+      ${S.checked[i]&&v&&v!==it.ans?`<div class="why">Revisa esta: toca el recuadro para cambiarla.</div>`:''}</div></div>`;
+  }).join('');
+  const bank = getBank(i).map(w=>`<button class="chip-btn" data-w="${esc(w)}" ${used.has(w)?'disabled':''}>${esc(w)}</button>`).join('');
+  return `<section class="card pop">
+    <h3>Paso 1 · Completa el borrador del informe</h3>
+    <p class="lead">Toca un recuadro y luego la palabra que corresponde. Ojo: sobran dos palabras.</p>
+    <div class="bank">${bank}</div>
+    ${items}
+    <div class="row"><button class="btn" id="chk">Revisar</button><button class="btn ghost" id="clr">Limpiar</button></div>
+    <div id="fbA"></div>
+  </section>`;
+}
+function bindCloze(i){
+  const m=MISSIONS[i]; const its=getItems(i);
+  document.querySelectorAll('[data-gap]').forEach(b=>b.onclick=()=>{
+    const k=+b.dataset.gap;
+    if(S.fill[i][k]){S.fill[i][k]=null;}
+    S.active[i]=k; S.checked[i]=false; renderMission(i);
+  });
+  document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{
+    let k=S.active[i];
+    if(S.fill[i][k]) k=S.fill[i].findIndex(v=>!v);
+    if(k<0) return;
+    S.fill[i][k]=b.dataset.w;
+    const next=S.fill[i].findIndex(v=>!v); S.active[i]=next<0?k:next;
+    S.checked[i]=false; renderMission(i);
+  });
+  $('clr').onclick=()=>{S.fill[i]=its.map(()=>null);S.active[i]=0;S.checked[i]=false;renderMission(i);};
+  $('chk').onclick=()=>{
+    if(S.fill[i].some(v=>!v)){ $('fbA').innerHTML='<div class="feedback warn">Aún hay recuadros vacíos. Completa todos antes de revisar.</div>'; return; }
+    S.attemptsA[i]++; S.checked[i]=true;
+    const okAll = its.every((it,k)=>S.fill[i][k]===it.ans);
+    const nOk = its.filter((it,k)=>S.fill[i][k]===it.ans).length;
+    if(okAll){
+      S.doneA[i]=true; S.starsA[i]=S.attemptsA[i]===1?3:S.attemptsA[i]===2?2:1;
+      renderSteps(); renderMission(i);
+      $('fbA').innerHTML=`<div class="feedback good"><b>¡Borrador listo!</b> Conseguiste ${'★'.repeat(S.starsA[i])}. Ahora pasa a redactar con tus propias palabras.<div class="row"><button class="btn green" id="toB">Pasar a escribir →</button></div></div>`;
+      $('toB').onclick=()=>{S.phase[i]='B';render();};
+    } else {
+      renderMission(i);
+      $('fbA').innerHTML=`<div class="feedback warn">Vas con ${nOk} de ${its.length}. Las que están en rojo no encajan: toca el recuadro, piensa qué mide o qué hace cada palabra y prueba otra.</div>`;
+    }
+  };
+  if(S.doneA[i]){
+    $('fbA').innerHTML=`<div class="feedback good"><b>Paso 1 completado.</b><div class="row"><button class="btn green" id="toB">Pasar a escribir →</button></div></div>`;
+    $('toB').onclick=()=>{S.phase[i]='B';render();};
+  }
+}
+
+/* ---- Fase B: redactar ---- */
+function writeHTML(i){
+  const m=MISSIONS[i];
+  return `<section class="card pop">
+    <h3>Paso 2 · Redacta con tus propias palabras</h3>
+    <p class="lead">${m.prompt}</p>
+    <p class="lead" style="margin-top:8px">Usa los 5 conceptos de abajo. Puedes nombrarlos con la palabra original <b>o con un sinónimo</b> de tu vocabulario; así no repites y tu texto suena más natural.</p>
+    <div class="terms" id="terms"></div>
+    <details><summary>¿Cómo arrancar? Frases de apoyo</summary><ul>${m.starters.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></details>
+    <textarea id="txt" placeholder="Escribe aquí tu informe…" spellcheck="true">${esc(S.text[i])}</textarea>
+    <div class="meter" id="meter"><i></i></div>
+    <div class="meta"><span id="cnt">0 caracteres</span><span>Mínimo ${MIN_CHARS}</span></div>
+    <div class="row"><button class="btn" id="rev">Revisar mi informe</button><button class="btn ghost" id="cpy">Copiar texto</button></div>
+    <div id="fbB"></div>
+  </section>`;
+}
+function analyze(i, text){
+  const m=MISSIONS[i]; const t=norm(text);
+  return m.terms.map(tm=>{
+    if(tm.re.test(t)){ const n=(t.match(new RegExp(tm.re.source,'g'))||[]).length; return {tm,state:'term',n}; }
+    const s=tm.syn.find(sy=>sy.re.test(t));
+    return s?{tm,state:'syn',syn:s.label,n:1}:{tm,state:'none',n:0};
+  });
+}
+function bindWrite(i){
+  const ta=$('txt');
+  const upd=()=>{
+    S.text[i]=ta.value;
+    const res=analyze(i,ta.value);
+    $('terms').innerHTML=res.map(r=>{
+      const c=r.state==='term'?'used':r.state==='syn'?'syn':'';
+      const extra=r.state==='term'?' ✓':r.state==='syn'?` <small>✓ con «${esc(r.syn)}»</small>`:'';
+      return `<span class="term ${c}">${esc(r.tm.label)}${extra}</span>`;
+    }).join('');
+    const len=ta.value.trim().length;
+    $('cnt').textContent=len+' caracteres';
+    const pct=Math.min(100,len/MIN_CHARS*100);
+    $('meter').firstElementChild.style.width=pct+'%';
+    $('meter').classList.toggle('full',len>=MIN_CHARS);
+    return res;
+  };
+  ta.oninput=upd; upd();
+  $('cpy').onclick=()=>{ (navigator.clipboard?navigator.clipboard.writeText(ta.value):Promise.reject()).then(()=>{$('cpy').textContent='¡Copiado!';setTimeout(()=>$('cpy').textContent='Copiar texto',1500);}).catch(()=>{ta.select();$('cpy').textContent='Selecciona y copia (Ctrl+C)';}); };
+  $('rev').onclick=()=>{
+    const res=upd(); const len=ta.value.trim().length;
+    const missing=res.filter(r=>r.state==='none').map(r=>r.tm.label);
+    const repeated=res.filter(r=>r.state==='term'&&r.n>=3);
+    const probs=[];
+    if(len<MIN_CHARS) probs.push(`Te faltan ${MIN_CHARS-len} caracteres para llegar al mínimo.`);
+    if(missing.length) probs.push(`Aún no aparece: <b>${missing.map(esc).join(', ')}</b>.`);
+    if(probs.length){
+      $('fbB').innerHTML=`<div class="feedback warn"><b>Casi.</b><ul>${probs.map(p=>`<li>${p}</li>`).join('')}</ul></div>`;
+      return;
+    }
+    const tips=repeated.map(r=>`Usaste «${esc(r.tm.label)}» ${r.n} veces: prueba con <b>${esc(r.tm.syn[0].label)}</b> o <b>${esc(r.tm.syn[1].label)}</b> en alguna.`);
+    const first=!S.doneB[i];
+    if(first){ S.doneB[i]=true; S.starsB[i]=3-Math.min(2,repeated.length); }
+    renderSteps();
+    $('fbB').innerHTML=`<div class="feedback good"><b>¡Informe completo!</b> Usaste los 5 conceptos y superaste el mínimo.${tips.length?`<ul>${tips.map(t=>`<li>${t}</li>`).join('')}</ul>`:'<br>Además variaste bien tus palabras.'}
+      <p style="margin-top:10px"><b>Antes de seguir, léete con ojo crítico:</b></p>
+      <label class="check"><input type="checkbox"> Cada concepto aparece en una oración que muestra que entiendo qué significa.</label>
+      <label class="check"><input type="checkbox"> Mi texto se entiende de principio a fin, no es una lista de palabras sueltas.</label>
+      <label class="check"><input type="checkbox"> Revisé ortografía y puntuación.</label>
+      <div class="row"><button class="btn green" id="nextM">${i<2?'Siguiente misión →':'Ir a la misión final →'}</button></div></div>`;
+    $('nextM').onclick=()=>{S.cur=i+1;render();};
+  };
+}
+
+/* ============================== MISIÓN 4: REFORMULAR ============================== */
+function renderRefo(){
+  if(!S.refo.length){ S.refo=REFO.map(()=>null); S.refoTries=REFO.map(()=>0); }
+  const done=S.refo.filter(v=>v==='ok').length;
+  const items=REFO.map((r,k)=>{
+    const st=S.refo[k];
+    return `<div class="refo-item"><p><b>${k+1}.</b> ${r.sent}</p>
+      <div class="refo-in"><input type="text" data-r="${k}" placeholder="Escribe otra forma de decir lo destacado" autocomplete="off" ${st==='ok'?'disabled class="ok"':''}><button class="btn ghost" data-rb="${k}" ${st==='ok'?'disabled':''}>Probar</button></div>
+      <div class="refo-msg" id="rm${k}">${st==='ok'?'✓ Correcto.':''}</div></div>`;
+  }).join('');
+  $('stage').innerHTML=`<section class="card pop">
+      <div class="kicker">Misión 4 de 4</div>
+      <h2>🔁 El traductor de analistas</h2>
+      <p class="lead">Tu jefe prefiere que no repitas términos. Reescribe cada frase cambiando la palabra destacada por <b>otra que signifique lo mismo</b> (un sinónimo de tu vocabulario). Escribe solo el reemplazo.</p>
+      <p class="caption">Llevas ${done} de ${REFO.length}.</p>
+    </section>
+    <section class="card pop">${items}
+      <div id="fbR"></div>
+    </section>`;
+  const check=k=>{
+    const inp=document.querySelector(`[data-r="${k}"]`); const v=norm(inp.value).trim().replace(/\s+/g,' ');
+    const msg=$('rm'+k); if(!v){msg.textContent='Escribe tu respuesta primero.';return;}
+    const r=REFO[k];
+    const ok=r.acc.some(a=>v===a||(v.length>=4&&v.includes(a)));
+    S.refoTries[k]++;
+    if(ok){
+      S.refo[k]='ok'; inp.classList.add('ok'); inp.disabled=true;
+      msg.innerHTML=`✓ ¡Bien! Válidos: <b>${r.show.map(esc).join(' · ')}</b>`;
+      const n=S.refo.filter(x=>x==='ok').length;
+      document.querySelector('.caption').textContent=`Llevas ${n} de ${REFO.length}.`;
+      document.querySelector(`[data-rb="${k}"]`).disabled=true;
+      if(n===REFO.length){
+        S.doneR=true;
+        // estrellas: 3 si 8+ fueron a la primera, 2 si 5+, 1 en otro caso
+        const first=S.refoTries.filter(t=>t===1).length;
+        S.starsR=first>=8?3:first>=5?2:1;
+        renderSteps();
+        $('fbR').innerHTML=`<div class="feedback good"><b>¡Traducción completa!</b> ${'★'.repeat(S.starsR)}<div class="row"><button class="btn green" id="toEnd">Ver mi resumen →</button></div></div>`;
+        $('toEnd').onclick=()=>{S.cur=4;render();};
+      }
+    } else {
+      inp.classList.add('bad');
+      if(S.refoTries[k]===1){ const first=r.show[0][0].toUpperCase(); msg.innerHTML=`Todavía no. Pista: uno de los sinónimos <b>empieza con «${first}»</b>.`; }
+      else { msg.innerHTML=`Revisa tu vocabulario. Las opciones válidas son: <b>${r.show.map(esc).join(' · ')}</b>. Escríbela para continuar.`; }
+    }
+  };
+  document.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>check(+b.dataset.rb));
+  document.querySelectorAll('[data-r]').forEach(inp=>{
+    inp.oninput=()=>inp.classList.remove('bad');
+    inp.onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();check(+inp.dataset.r);} };
+  });
+  if(S.doneR){ $('fbR').innerHTML=`<div class="feedback good"><b>Misión completada.</b><div class="row"><button class="btn green" id="toEnd">Ver mi resumen →</button></div></div>`; $('toEnd').onclick=()=>{S.cur=4;render();}; }
+}
+
+/* ============================== FINAL ============================== */
+function renderFinal(){
+  const tot=totalStars(), max=3*7;
+  const msg = tot>=18?'Dominas el lenguaje de la unidad: tus textos usan los conceptos con soltura y variedad.'
+            : tot>=12?'Vas muy bien. Repite las misiones donde sacaste menos estrellas y apunta a variar más tus palabras.'
+            : 'Buen comienzo. Vuelve a las misiones, lee las explicaciones y practica explicar cada concepto con tus palabras.';
+  const all=MISSIONS.map((m,i)=>`${m.title}\n${S.text[i]}`).join('\n\n');
+  $('stage').innerHTML=`<section class="card pop">
+    <div class="kicker">Resumen</div>
+    <h2>🏁 Taller completado</h2>
+    <p class="lead">${msg}</p>
+    <div class="final-grid">
+      ${MISSIONS.map((m,i)=>`<div>${m.icon}<b>${S.starsA[i]+S.starsB[i]} / 6</b>${m.title}</div>`).join('')}
+      <div>🔁<b>${S.starsR} / 3</b>Traductor</div>
+    </div>
+    <h3>Para llevarte</h3>
+    <details open><summary>Tres ideas para escribir mejor con estos conceptos</summary><ul>
+      <li>Escribe cada concepto en una oración que muestre <b>para qué sirve</b> o <b>qué significa</b>, no solo que lo nombras.</li>
+      <li>Si ya usaste una palabra, la segunda vez usa su <b>sinónimo</b>; así no repites y lo demuestras dominio.</li>
+      <li>Une las ideas con conectores (<i>primero, luego, por eso, sin embargo, finalmente</i>) para que sea un texto y no una lista.</li>
+    </ul></details>
+    <div class="row"><button class="btn" id="cpyAll">Copiar mis tres informes</button><button class="btn ghost" id="again">Volver al inicio</button></div>
+  </section>`;
+  $('cpyAll').onclick=()=>{ (navigator.clipboard?navigator.clipboard.writeText(all):Promise.reject()).then(()=>{$('cpyAll').textContent='¡Copiado!';}).catch(()=>{$('cpyAll').textContent='No se pudo copiar';}); };
+  $('again').onclick=()=>{S.cur=0;render();};
+}
+
+/* ============================== RENDER ============================== */
+function render(){
+  renderSteps();
+  if(S.cur<=2) renderMission(S.cur);
+  else if(S.cur===3) renderRefo();
+  else renderFinal();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+render();
+</script>
+</body>
+</html>
