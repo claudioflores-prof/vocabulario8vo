@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Escape del Laboratorio de Encuestas · 8° Básico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F4F9; --bg-dot:rgba(47,111,237,0.16);
+    --surface:#FFFFFF; --surface-2:#E7ECF5;
+    --text:#101826; --muted:#55607A; --border:#D7DEEA;
+    --blue:#2F6FED; --blue-ink:#FFFFFF; --blue-soft:rgba(47,111,237,0.10);
+    --green:#1FA87A; --green-soft:rgba(31,168,122,0.14);
+    --red:#E4483B; --red-soft:rgba(228,72,59,0.12);
+    --amber:#C98418; --amber-soft:rgba(201,132,24,0.14);
+    --shadow:0 1px 2px rgba(16,24,38,0.04), 0 8px 24px -8px rgba(16,24,38,0.12);
+    --r-lg:22px; --r-md:14px; --r-sm:9px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1120; --bg-dot:rgba(91,143,255,0.16);
+      --surface:#121B2E; --surface-2:#1A2740;
+      --text:#EAF0FB; --muted:#8C9AB8; --border:#24304A;
+      --blue:#5B8FFF; --blue-ink:#08101F; --blue-soft:rgba(91,143,255,0.16);
+      --green:#35D399; --green-soft:rgba(53,211,153,0.16);
+      --red:#FF6B5E; --red-soft:rgba(255,107,94,0.16);
+      --amber:#F0B94D; --amber-soft:rgba(240,185,77,0.16);
+      --shadow:0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -10px rgba(0,0,0,0.55);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(var(--bg-dot) 1.4px, transparent 1.4px) 0 0/28px 28px, var(--bg);
+    color:var(--text);
+    font-family:"Lexend", ui-sans-serif, system-ui, sans-serif;
+    min-height:100vh; padding:18px 16px 40px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;text-wrap:balance;}
+  .mono{font-family:"IBM Plex Mono", ui-monospace, monospace;}
+  .hidden{display:none !important;}
+  .wrap{max-width:640px;margin:0 auto;}
+
+  /* barra superior */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+  .locks{display:flex;gap:8px;}
+  .lock{width:38px;height:38px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);display:grid;place-items:center;font-size:18px;position:relative;transition:all .3s;}
+  .lock.cur{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+  .lock.open{border-color:var(--green);background:var(--green-soft);}
+  .lock b{position:absolute;right:-6px;bottom:-6px;font-size:10px;background:var(--green);color:#fff;border-radius:99px;width:18px;height:18px;display:grid;place-items:center;}
+  .timer{font-size:20px;font-weight:700;padding:6px 12px;border-radius:12px;background:var(--surface);border:1.5px solid var(--border);min-width:84px;text-align:center;}
+  .timer.warn{color:var(--amber);border-color:var(--amber);}
+  .timer.over{color:var(--red);border-color:var(--red);}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px 20px;}
+  .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:6px;}
+  .title{font-size:26px;font-weight:800;line-height:1.15;}
+  .lead{color:var(--muted);font-size:15px;line-height:1.5;margin:10px 0 0;}
+  .lead b{color:var(--text);}
+
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:16px 0 6px;}
+  input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px 14px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--bg);color:var(--text);outline:none;}
+  input[type=text]:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+  .seg{display:flex;gap:8px;}
+  .seg button{flex:1;}
+
+  .btn{font:inherit;font-weight:700;font-size:15px;padding:13px 18px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:transform .08s, background .2s, border-color .2s;}
+  .btn:active{transform:scale(.97);}
+  .btn.primary{background:var(--blue);color:var(--blue-ink);border-color:var(--blue);}
+  .btn.ghost{background:transparent;}
+  .btn.on{border-color:var(--blue);background:var(--blue-soft);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn.block{width:100%;margin-top:18px;}
+  .row{display:flex;gap:10px;margin-top:18px;}
+  .row .btn{flex:1;}
+
+  .rules{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px;}
+  .rules li{display:flex;gap:12px;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;font-size:14px;line-height:1.4;}
+  .rules .ic{font-size:22px;line-height:1;flex:none;}
+  .rules b{display:block;}
+
+  /* cabecera de candado */
+  .lhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;}
+  .pill{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted);}
+  .prog{height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:10px 0 18px;}
+  .prog i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s;}
+  .hint{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.45;}
+
+  /* candado 1: parejas */
+  .pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .col{display:grid;gap:8px;align-content:start;}
+  .tile{font:inherit;font-size:14px;font-weight:600;text-align:center;padding:12px 8px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;min-height:52px;display:grid;place-items:center;line-height:1.25;transition:all .18s;}
+  .tile.sel{border-color:var(--blue);background:var(--blue-soft);}
+  .tile.ok{border-color:var(--green);background:var(--green-soft);color:var(--green);pointer-events:none;}
+  .tile.bad{animation:shake .35s;border-color:var(--red);background:var(--red-soft);}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+  /* candado 2: intruso */
+  .opts{display:grid;gap:10px;}
+  .opt{font:inherit;font-size:16px;font-weight:600;text-align:left;padding:14px 16px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .18s;}
+  .opt .k{width:28px;height:28px;border-radius:9px;background:var(--surface-2);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none;}
+  .opt.ok{border-color:var(--green);background:var(--green-soft);}
+  .opt.bad{border-color:var(--red);background:var(--red-soft);animation:shake .35s;}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:14px;padding:12px 14px;border-radius:var(--r-md);font-size:14px;line-height:1.45;}
+  .fb.ok{background:var(--green-soft);color:var(--green);}
+  .fb.bad{background:var(--red-soft);color:var(--red);}
+
+  /* candado 3: anagrama */
+  .clues{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .clue{font-size:14px;font-weight:600;padding:8px 12px;border-radius:99px;background:var(--amber-soft);color:var(--amber);}
+  .slots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0 14px;min-height:48px;}
+  .slot{width:38px;height:46px;border-radius:9px;border:1.5px dashed var(--border);display:grid;place-items:center;font-size:20px;font-weight:700;text-transform:uppercase;background:var(--bg);cursor:pointer;}
+  .slot.f{border-style:solid;border-color:var(--blue);background:var(--blue-soft);}
+  .slot.ok{border-color:var(--green);background:var(--green-soft);color:var(--green);}
+  .slot.bad{border-color:var(--red);background:var(--red-soft);animation:shake .35s;}
+  .slot.gap{width:14px;border:none;background:transparent;cursor:default;}
+  .bank{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+  .let{width:40px;height:46px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);font:inherit;font-size:20px;font-weight:700;text-transform:uppercase;cursor:pointer;color:var(--text);}
+  .let:disabled{opacity:.18;cursor:default;}
+  .tools{display:flex;gap:8px;margin-top:14px;}
+  .tools .btn{flex:1;font-size:14px;padding:11px;}
+
+  /* código */
+  .digits{display:flex;gap:10px;justify-content:center;margin:18px 0;}
+  .digit{width:64px;height:76px;border-radius:16px;border:2px solid var(--border);background:var(--bg);display:grid;place-items:center;font-size:34px;font-weight:700;}
+  .digit.got{border-color:var(--green);background:var(--green-soft);color:var(--green);}
+  .digit.locked{color:var(--muted);font-size:26px;}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;margin:0 auto;}
+  .keypad .btn{padding:14px;font-size:20px;}
+  .code-in{display:flex;gap:10px;justify-content:center;margin:14px 0;}
+  .code-in .digit{cursor:default;}
+  .door{font-size:72px;text-align:center;margin:6px 0;transition:transform .6s;}
+  .door.open{transform:rotateY(70deg) scale(1.1);}
+
+  /* resultados */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0;}
+  .stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;text-align:center;}
+  .stat b{display:block;font-size:24px;font-weight:800;}
+  .stat span{font-size:12px;color:var(--muted);}
+  .stars{font-size:30px;letter-spacing:4px;text-align:center;}
+  .review{margin-top:16px;}
+  .review h3{font-size:14px;color:var(--muted);margin-bottom:8px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{font-size:13px;font-weight:600;padding:7px 11px;border-radius:99px;background:var(--amber-soft);color:var(--amber);}
+  .chip.all{background:var(--green-soft);color:var(--green);}
+  .ticket{margin-top:18px;background:var(--bg);border:1px dashed var(--border);border-radius:var(--r-md);padding:14px;font-size:13px;line-height:1.5;}
+  .ticket .mono{font-size:15px;font-weight:700;}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;}
+  .foot b{color:var(--text);}
+  @media (max-width:420px){ .title{font-size:22px;} .tile{font-size:13px;} .digit{width:54px;height:66px;font-size:28px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="locks">
+      <div class="lock" id="lk1">🔒</div>
+      <div class="lock" id="lk2">🔒</div>
+      <div class="lock" id="lk3">🔒</div>
+      <div class="lock" id="lk4">🚪</div>
+    </div>
+    <div class="timer mono" id="timer">15:00</div>
+  </div>
+
+  <!-- INICIO -->
+  <section class="card" id="s-inicio">
+    <div class="eyebrow">Habilidades Digitales · 8° Básico</div>
+    <h1 class="title">Escape del Laboratorio de Encuestas</h1>
+    <p class="lead">Alguien borró los resultados de la encuesta del curso y quedaste encerrado en el laboratorio de computación. La puerta tiene un código de <b>3 dígitos</b>. Cada candado que abras te entrega un número. Tienes <b>15 minutos</b> antes de que empiece el recreo sin ti.</p>
+
+    <ul class="rules">
+      <li><span class="ic">🧩</span><div><b>Candado 1 · Conexiones</b>Une cada concepto con su sinónimo.</div></li>
+      <li><span class="ic">🕵️</span><div><b>Candado 2 · El intruso</b>Tres palabras hablan de lo mismo. Una no. Encuéntrala.</div></li>
+      <li><span class="ic">🔤</span><div><b>Candado 3 · Palabra revuelta</b>Con las pistas, arma el concepto letra por letra.</div></li>
+    </ul>
+
+    <label for="nombre">Tu nombre</label>
+    <input type="text" id="nombre" placeholder="Nombre y apellido" autocomplete="off" />
+    <label>Tu curso</label>
+    <div class="seg">
+      <button class="btn" data-curso="8°C">8°C</button>
+      <button class="btn" data-curso="8°D">8°D</button>
+    </div>
+    <button class="btn primary block" id="b-start" disabled>Entrar a la sala</button>
+  </section>
+
+  <!-- CANDADO 1 -->
+  <section class="card hidden" id="s-c1">
+    <div class="lhead"><div><div class="eyebrow">Candado 1</div><h2 class="title">Conexiones</h2></div><span class="pill" id="c1-pill">Tanda 1 de 2</span></div>
+    <div class="prog"><i id="c1-prog"></i></div>
+    <p class="hint">Toca un concepto de la izquierda y luego su sinónimo de la derecha. Si se ponen verdes, van juntos.</p>
+    <div class="pairs">
+      <div class="col" id="c1-left"></div>
+      <div class="col" id="c1-right"></div>
+    </div>
+  </section>
+
+  <!-- CANDADO 2 -->
+  <section class="card hidden" id="s-c2">
+    <div class="lhead"><div><div class="eyebrow">Candado 2</div><h2 class="title">El intruso</h2></div><span class="pill" id="c2-pill">1 de 8</span></div>
+    <div class="prog"><i id="c2-prog"></i></div>
+    <p class="hint">Tres de estas palabras nombran lo mismo. Una se coló desde otro concepto. ¿Cuál es la intrusa?</p>
+    <div class="opts" id="c2-opts"></div>
+    <div id="c2-fb"></div>
+    <button class="btn primary block hidden" id="c2-next">Siguiente</button>
+  </section>
+
+  <!-- CANDADO 3 -->
+  <section class="card hidden" id="s-c3">
+    <div class="lhead"><div><div class="eyebrow">Candado 3</div><h2 class="title">Palabra revuelta</h2></div><span class="pill" id="c3-pill">1 de 6</span></div>
+    <div class="prog"><i id="c3-prog"></i></div>
+    <p class="hint">Estas dos pistas son sinónimos del mismo concepto. Arma el concepto con las letras.</p>
+    <div class="clues" id="c3-clues"></div>
+    <div class="slots" id="c3-slots"></div>
+    <div class="bank" id="c3-bank"></div>
+    <div class="tools">
+      <button class="btn ghost" id="c3-undo">Borrar última</button>
+      <button class="btn ghost" id="c3-hint">Pista: primera letra</button>
+    </div>
+  </section>
+
+  <!-- PUERTA -->
+  <section class="card hidden" id="s-door">
+    <div class="eyebrow">Último paso</div>
+    <h2 class="title">Abre la puerta</h2>
+    <p class="lead">Estos son los dígitos que ganaste. Escríbelos en el orden de los candados.</p>
+    <div class="digits" id="won-digits"></div>
+    <div class="door" id="door">🚪</div>
+    <div class="code-in" id="code-in"><div class="digit">·</div><div class="digit">·</div><div class="digit">·</div></div>
+    <div class="keypad" id="keypad"></div>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section class="card hidden" id="s-fin">
+    <div class="eyebrow" id="fin-eyebrow">Saliste de la sala</div>
+    <h2 class="title" id="fin-title">Lo lograste</h2>
+    <p class="lead" id="fin-lead"></p>
+    <div class="stars" id="fin-stars"></div>
+    <div class="stats">
+      <div class="stat"><b id="st-time">0:00</b><span>Tiempo</span></div>
+      <div class="stat"><b id="st-ok">0</b><span>Aciertos</span></div>
+      <div class="stat"><b id="st-err">0</b><span>Errores</span></div>
+    </div>
+    <div class="review">
+      <h3>Conceptos para repasar antes del control</h3>
+      <div class="chips" id="fin-chips"></div>
+    </div>
+    <div class="ticket">
+      <div>Muéstrale esta pantalla al profe o saca una captura.</div>
+      <div class="mono" id="fin-ticket"></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="b-copy">Copiar resultado</button>
+      <button class="btn primary" id="b-again">Jugar de nuevo</button>
+    </div>
+  </section>
+
+  <div class="foot">Vocabulario de Estadística con Hojas de cálculo · Noviembre · <b>Colegio Nahuel</b></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== Vocabulario de noviembre: términos de bloques de redacción y términos de apoyo (concepto + sinónimos del documento) ===== */
+const VOCAB = [
+  ["Población","Universo","Grupo total"],
+  ["Muestra","Subgrupo","Parte del grupo"],
+  ["Representativo","Típico","Característico"],
+  ["Encuesta","Sondeo","Consulta"],
+  ["Pregunta de investigación","Interrogante","Problema del estudio"],
+  ["Asociación","Relación","Vínculo"],
+  ["Causalidad","Relación causa-efecto","Causa directa"],
+  ["Evidencia","Prueba","Respaldo"],
+  ["Formulario","Cuestionario en línea","Ficha"],
+  ["Respuesta","Contestación","Registro"],
+  ["Pestaña","Hoja","Página del libro"],
+  ["Encabezado","Título de columna","Rótulo"],
+  ["Limpieza de datos","Depuración","Corrección de errores"],
+  ["Duplicado","Repetido","Copia"],
+  ["Celda vacía","Casilla en blanco","Espacio sin dato"],
+  ["Gráfico de dispersión","Nube de puntos","Diagrama XY"],
+  ["Línea de tendencia","Recta de ajuste","Línea guía"],
+  ["Autocompletar","Rellenar","Copiar hacia abajo"],
+  ["Formato condicional","Resaltado automático","Color según valor"],
+  ["Dashboard","Panel de control","Tablero de resultados"]
+];
+/* Conceptos de una sola palabra para el candado 3 */
+const ANAGRAMA = ["Población", "Muestra", "Encuesta", "Asociación", "Causalidad", "Evidencia", "Formulario", "Respuesta", "Pestaña", "Encabezado", "Duplicado", "Dashboard"];
+/* Conceptos emparentados: no se mezclan en una misma pregunta */
+const FAMILIA = {"Población": "est", "Muestra": "est", "Representativo": "est", "Encuesta": "enc", "Formulario": "enc", "Respuesta": "enc", "Pregunta de investigación": "enc", "Gráfico de dispersión": "rel", "Línea de tendencia": "rel", "Asociación": "rel", "Causalidad": "rel", "Evidencia": "rel", "Encabezado": "lim", "Limpieza de datos": "lim", "Duplicado": "lim", "Celda vacía": "lim", "Pestaña": "hoj", "Autocompletar": "hoj", "Formato condicional": "hoj", "Dashboard": "hoj"};
+const fam = c => FAMILIA[c] || c;
+
+/* Raíces compartidas: el intruso no puede parecerse a las palabras del grupo */
+const normR = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," ").replace(/\s+/g," ").trim();
+const STOP = new Set(["de","la","el","los","las","del","y","en","o","a","un","una"]);
+const raices = s => normR(s).split(" ").filter(w=>w.length>3 && !STOP.has(w)).map(w=>w.slice(0,5));
+const compartenRaiz = (a,b) => { const rb = raices(b); return raices(a).some(r=>rb.includes(r)); };
+
+/* ===== utilidades ===== */
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const pick = (a,n) => shuffle(a).slice(0,n);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function show(id){ document.querySelectorAll("section.card").forEach(s=>s.classList.add("hidden")); $(id).classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800); }
+function setLock(n, state){ const el=$("#lk"+n); el.classList.remove("cur","open"); if(state==="cur") el.classList.add("cur"); if(state==="open"){ el.classList.add("open"); el.innerHTML="🔓<b>"+G.digits[n-1]+"</b>"; } }
+
+/* ===== estado ===== */
+const G = { nombre:"", curso:"", t0:0, tick:null, ok:0, err:0, fallos:{}, digits:[], over:false };
+const LIMITE = 15*60;
+
+function fallo(c){ G.err++; G.fallos[c]=(G.fallos[c]||0)+1; }
+function fmt(s){ s=Math.max(0,Math.round(s)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); }
+function elapsed(){ return (Date.now()-G.t0)/1000; }
+function startTimer(){
+  G.t0 = Date.now();
+  const el = $("#timer");
+  G.tick = setInterval(()=>{
+    const left = LIMITE - elapsed();
+    el.textContent = left >= 0 ? fmt(left) : "+"+fmt(-left);
+    el.classList.toggle("warn", left<180 && left>=0);
+    el.classList.toggle("over", left<0);
+    if (left<0 && !G.over){ G.over=true; toast("Se acabó el tiempo, pero puedes seguir hasta salir"); }
+  }, 500);
+}
+
+/* ===== inicio ===== */
+document.querySelectorAll("[data-curso]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("[data-curso]").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); G.curso=b.dataset.curso; checkStart();
+}));
+$("#nombre").addEventListener("input", checkStart);
+function checkStart(){ $("#b-start").disabled = !($("#nombre").value.trim().length>2 && G.curso); }
+$("#b-start").addEventListener("click", ()=>{
+  G.nombre = $("#nombre").value.trim();
+  G.digits = [1,2,3].map(()=>Math.floor(Math.random()*10));
+  startTimer();
+  setLock(1,"cur");
+  c1Start();
+});
+
+/* ===== Candado 1: conexiones ===== */
+const C1 = { tandas:[], t:0, sel:null, left:0 };
+function c1Start(){
+  const conceptos = pick(VOCAB, 12);
+  C1.tandas = [conceptos.slice(0,6), conceptos.slice(6,12)];
+  C1.t = 0;
+  c1Render();
+  show("#s-c1");
+}
+function c1Render(){
+  const tanda = C1.tandas[C1.t];
+  $("#c1-pill").textContent = "Tanda "+(C1.t+1)+" de 2";
+  $("#c1-prog").style.width = (C1.t*50)+"%";
+  C1.sel = null; C1.left = tanda.length;
+  const L = $("#c1-left"), R = $("#c1-right");
+  L.innerHTML=""; R.innerHTML="";
+  tanda.forEach((v,i)=>{
+    const b=document.createElement("button"); b.className="tile"; b.textContent=v[0]; b.dataset.i=i;
+    b.addEventListener("click",()=>{ L.querySelectorAll(".tile").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); C1.sel=i; });
+    L.appendChild(b);
+  });
+  shuffle(tanda.map((v,i)=>({i, s:v[1+Math.floor(Math.random()*2)]}))).forEach(o=>{
+    const b=document.createElement("button"); b.className="tile"; b.textContent=o.s;
+    b.addEventListener("click",()=>{
+      if (C1.sel===null){ toast("Primero elige un concepto"); return; }
+      const lt = L.querySelector('.tile[data-i="'+C1.sel+'"]');
+      if (o.i===C1.sel){
+        lt.classList.add("ok"); lt.classList.remove("sel"); b.classList.add("ok"); G.ok++; C1.sel=null; C1.left--;
+        $("#c1-prog").style.width = (C1.t*50 + (tanda.length-C1.left)/tanda.length*50)+"%";
+        if (C1.left===0) setTimeout(()=>{ C1.t++; if (C1.t<2) c1Render(); else c1Done(); }, 600);
+      } else {
+        fallo(tanda[C1.sel][0]); b.classList.add("bad"); lt.classList.add("bad");
+        setTimeout(()=>{ b.classList.remove("bad"); lt.classList.remove("bad"); }, 400);
+      }
+    });
+    R.appendChild(b);
+  });
+}
+function c1Done(){ setLock(1,"open"); toast("Candado 1 abierto. Tu primer dígito es "+G.digits[0]); setLock(2,"cur"); setTimeout(c2Start, 900); }
+
+/* ===== Candado 2: el intruso ===== */
+const C2 = { rondas:[], i:0, N:8 };
+function c2Start(){
+  const base = pick(VOCAB, C2.N);
+  C2.rondas = base.map(v=>{
+    const otros = VOCAB.filter(o=>fam(o[0])!==fam(v[0]));
+    const cand = [];
+    otros.forEach(o=>[o[1],o[2]].forEach(s=>{ if (![v[0],v[1],v[2]].some(t=>compartenRaiz(s,t))) cand.push([o,s]); }));
+    const par = cand[Math.floor(Math.random()*cand.length)];
+    const o = par[0], intruso = par[1];
+    return { c:v[0], items:shuffle([v[0],v[1],v[2],intruso]), intruso, de:o[0] };
+  });
+  C2.i=0; c2Render(); show("#s-c2");
+}
+function c2Render(){
+  const r = C2.rondas[C2.i];
+  $("#c2-pill").textContent = (C2.i+1)+" de "+C2.N;
+  $("#c2-prog").style.width = (C2.i/C2.N*100)+"%";
+  $("#c2-fb").innerHTML=""; $("#c2-next").classList.add("hidden");
+  const box=$("#c2-opts"); box.innerHTML="";
+  r.items.forEach((it,k)=>{
+    const b=document.createElement("button"); b.className="opt"; b.innerHTML='<span class="k">'+"ABCD"[k]+'</span><span>'+esc(it)+'</span>';
+    b.addEventListener("click",()=>{
+      box.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+      if (it===r.intruso){
+        b.classList.add("ok"); G.ok++;
+        $("#c2-fb").innerHTML='<div class="fb ok">Exacto. «'+esc(it)+'» es sinónimo de <b>'+esc(r.de)+'</b>, no de '+esc(r.c)+'.</div>';
+      } else {
+        b.classList.add("bad"); fallo(r.c);
+        box.querySelectorAll(".opt").forEach(x=>{ if (x.textContent.slice(1)===r.intruso) x.classList.add("ok"); });
+        $("#c2-fb").innerHTML='<div class="fb bad">Esa sí pertenece. La intrusa era «'+esc(r.intruso)+'», que viene de <b>'+esc(r.de)+'</b>.</div>';
+      }
+      $("#c2-next").classList.remove("hidden");
+      $("#c2-next").textContent = C2.i+1<C2.N ? "Siguiente" : "Abrir candado 2";
+    });
+    box.appendChild(b);
+  });
+}
+$("#c2-next").addEventListener("click",()=>{ C2.i++; if (C2.i<C2.N) c2Render(); else { $("#c2-prog").style.width="100%"; c2Done(); } });
+function c2Done(){ setLock(2,"open"); toast("Candado 2 abierto. Tu segundo dígito es "+G.digits[1]); setLock(3,"cur"); setTimeout(c3Start, 900); }
+
+/* ===== Candado 3: palabra revuelta ===== */
+const C3 = { rondas:[], i:0, N:6, word:"", typed:[], used:[], hinted:false };
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase();
+function c3Start(){
+  C3.rondas = pick(ANAGRAMA, C3.N).map(c=>{ const v=VOCAB.find(x=>x[0]===c); return {c, pistas:[v[1],v[2]]}; });
+  C3.i=0; c3Render(); show("#s-c3");
+}
+function c3Render(){
+  const r=C3.rondas[C3.i];
+  C3.word = norm(r.c); C3.typed=[]; C3.used=[]; C3.hinted=false;
+  $("#c3-pill").textContent=(C3.i+1)+" de "+C3.N;
+  $("#c3-prog").style.width=(C3.i/C3.N*100)+"%";
+  $("#c3-clues").innerHTML = r.pistas.map(p=>'<span class="clue">'+esc(p)+'</span>').join("");
+  $("#c3-hint").disabled=false;
+  const letras = C3.word.split("");
+  let bank = shuffle(letras.map((l,i)=>({l,i})));
+  /* si al barajar queda igual, se vuelve a barajar */
+  if (bank.map(x=>x.l).join("")===C3.word) bank = bank.reverse();
+  C3.bank = bank;
+  c3Draw();
+}
+function c3Draw(){
+  const S=$("#c3-slots"); S.innerHTML="";
+  C3.word.split("").forEach((_,k)=>{
+    const d=document.createElement("div"); d.className="slot"+(C3.typed[k]!==undefined?" f":"");
+    d.textContent = C3.typed[k]!==undefined ? C3.typed[k].l : "";
+    S.appendChild(d);
+  });
+  const B=$("#c3-bank"); B.innerHTML="";
+  C3.bank.forEach(o=>{
+    const b=document.createElement("button"); b.className="let"; b.textContent=o.l; b.disabled=C3.used.includes(o.i);
+    b.addEventListener("click",()=>{ C3.typed.push(o); C3.used.push(o.i); c3Draw(); if (C3.typed.length===C3.word.length) c3Check(); });
+    B.appendChild(b);
+  });
+}
+function c3Check(){
+  const r=C3.rondas[C3.i];
+  const got=C3.typed.map(o=>o.l).join("");
+  const slots=$("#c3-slots").querySelectorAll(".slot");
+  if (got===C3.word){
+    slots.forEach(s=>s.classList.add("ok")); G.ok++;
+    setTimeout(()=>{ C3.i++; if (C3.i<C3.N) c3Render(); else { $("#c3-prog").style.width="100%"; c3Done(); } }, 700);
+  } else {
+    fallo(r.c); slots.forEach(s=>s.classList.add("bad"));
+    toast("Esa palabra no es. Prueba otra vez");
+    setTimeout(()=>{ C3.typed=[]; C3.used=[]; c3Draw(); }, 500);
+  }
+}
+$("#c3-undo").addEventListener("click",()=>{ if(!C3.typed.length) return; C3.typed.pop(); C3.used.pop(); c3Draw(); });
+$("#c3-hint").addEventListener("click",()=>{
+  if (C3.hinted) return;
+  C3.hinted=true; $("#c3-hint").disabled=true; fallo(C3.rondas[C3.i].c);
+  const first = C3.bank.find(o=>o.l===C3.word[0] && !C3.used.includes(o.i));
+  C3.typed=[]; C3.used=[]; C3.typed.push(first); C3.used.push(first.i); c3Draw();
+  toast("La pista cuenta como un error, pero vale la pena");
+});
+function c3Done(){ setLock(3,"open"); toast("Candado 3 abierto. Tu tercer dígito es "+G.digits[2]); setLock(4,"cur"); setTimeout(doorStart, 900); }
+
+/* ===== Puerta ===== */
+const D = { code:[] };
+function doorStart(){
+  $("#won-digits").innerHTML = G.digits.map(d=>'<div class="digit got">'+d+'</div>').join("");
+  D.code=[]; doorDraw();
+  const K=$("#keypad"); K.innerHTML="";
+  [1,2,3,4,5,6,7,8,9,"←",0,"OK"].forEach(k=>{
+    const b=document.createElement("button"); b.className="btn"+(k==="OK"?" primary":""); b.textContent=k;
+    b.addEventListener("click",()=>{
+      if (k==="←") D.code.pop();
+      else if (k==="OK") doorTry();
+      else if (D.code.length<3) D.code.push(k);
+      doorDraw();
+    });
+    K.appendChild(b);
+  });
+  show("#s-door");
+}
+function doorDraw(){ $("#code-in").querySelectorAll(".digit").forEach((d,i)=>{ d.textContent = D.code[i]!==undefined ? D.code[i] : "·"; d.classList.toggle("got", D.code[i]!==undefined); }); }
+function doorTry(){
+  if (D.code.length<3){ toast("Faltan dígitos"); return; }
+  if (D.code.join("")===G.digits.join("")){
+    $("#door").classList.add("open"); $("#door").textContent="🎉";
+    const lk=$("#lk4"); lk.classList.remove("cur"); lk.classList.add("open"); lk.textContent="✅";
+    clearInterval(G.tick);
+    setTimeout(finish, 900);
+  } else { toast("Ese código no abre. Revisa el orden"); D.code=[]; doorDraw(); }
+}
+
+/* ===== Resultados ===== */
+function finish(){
+  const t = elapsed();
+  const total = G.ok + G.err;
+  const pct = total ? G.ok/total : 0;
+  let stars = pct>=0.9 ? 3 : pct>=0.7 ? 2 : 1;
+  if (t > LIMITE && stars>1) stars--;
+  $("#fin-stars").textContent = "★".repeat(stars)+"☆".repeat(3-stars);
+  $("#st-time").textContent = fmt(t);
+  $("#st-ok").textContent = G.ok;
+  $("#st-err").textContent = G.err;
+  const msg = stars===3 ? "Saliste rápido y casi sin tropiezos. Llegas al control con el vocabulario claro."
+            : stars===2 ? "Saliste de la sala con algunos tropiezos. Dale una mirada a los conceptos de abajo y quedas listo."
+            : "Saliste, pero costó. Los conceptos de abajo son los que más te conviene repasar esta semana.";
+  $("#fin-lead").textContent = G.nombre+", "+msg.charAt(0).toLowerCase()+msg.slice(1);
+  $("#fin-title").textContent = t>LIMITE ? "Saliste, justo después del timbre" : "Lo lograste";
+  const chips=$("#fin-chips");
+  const malos = Object.entries(G.fallos).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  chips.innerHTML = malos.length ? malos.map(c=>'<span class="chip">'+esc(c)+'</span>').join("") : '<span class="chip all">Ninguno. Todo correcto.</span>';
+  const ticket = "ESCAPE-8 NOV · "+G.nombre+" · "+G.curso+" · "+fmt(t)+" · "+G.ok+" ok / "+G.err+" err · "+"★".repeat(stars);
+  $("#fin-ticket").textContent = ticket;
+  G.ticket = ticket + (malos.length ? " · Repasar: "+malos.join(", ") : "");
+  show("#s-fin");
+}
+$("#b-copy").addEventListener("click", async ()=>{
+  try { await navigator.clipboard.writeText(G.ticket); toast("Resultado copiado"); }
+  catch(e){ toast("No se pudo copiar, saca una captura"); }
+});
+$("#b-again").addEventListener("click", ()=>location.reload());
+</script>
+</body>
+</html>
