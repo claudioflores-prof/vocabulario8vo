@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Racha de Datos · Vocabulario 8° Básico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F4F9; --bg-dot:rgba(47,111,237,0.16);
+    --surface:#FFFFFF; --surface-2:#E7ECF5;
+    --text:#101826; --muted:#55607A; --border:#D7DEEA;
+    --blue:#2F6FED; --blue-ink:#FFFFFF; --blue-soft:rgba(47,111,237,0.10);
+    --green:#1FA87A; --green-soft:rgba(31,168,122,0.14);
+    --red:#E4483B; --red-soft:rgba(228,72,59,0.12);
+    --amber:#C98418; --amber-soft:rgba(201,132,24,0.14);
+    --shadow:0 1px 2px rgba(16,24,38,0.04), 0 8px 24px -8px rgba(16,24,38,0.12);
+    --r-lg:22px; --r-md:14px; --r-sm:9px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1120; --bg-dot:rgba(91,143,255,0.16);
+      --surface:#121B2E; --surface-2:#1A2740;
+      --text:#EAF0FB; --muted:#8C9AB8; --border:#24304A;
+      --blue:#5B8FFF; --blue-ink:#08101F; --blue-soft:rgba(91,143,255,0.16);
+      --green:#35D399; --green-soft:rgba(53,211,153,0.16);
+      --red:#FF6B5E; --red-soft:rgba(255,107,94,0.16);
+      --amber:#F0B94D; --amber-soft:rgba(240,185,77,0.16);
+      --shadow:0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -10px rgba(0,0,0,0.55);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(var(--bg-dot) 1.4px, transparent 1.4px) 0 0/28px 28px, var(--bg);
+    color:var(--text);
+    font-family:"Lexend", ui-sans-serif, system-ui, sans-serif;
+    min-height:100vh; padding:18px 16px 40px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;text-wrap:balance;}
+  .mono{font-family:"IBM Plex Mono", ui-monospace, monospace;}
+  .hidden{display:none !important;}
+  .wrap{max-width:640px;margin:0 auto;}
+  button{font:inherit;cursor:pointer;}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px 20px;}
+  .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:6px;}
+  .title{font-size:28px;font-weight:800;line-height:1.15;}
+  .lead{color:var(--muted);font-size:15px;line-height:1.5;margin:10px 0 0;}
+  .lead b{color:var(--text);}
+
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:16px 0 6px;}
+  input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px 14px;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--bg);color:var(--text);outline:none;}
+  input[type=text]:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r-md);padding:14px 18px;font-weight:700;font-size:16px;background:var(--blue);color:var(--blue-ink);transition:transform .08s, filter .15s;}
+  .btn:hover{filter:brightness(1.06);} .btn:active{transform:scale(.98);}
+  .btn.ghost{background:var(--surface-2);color:var(--text);}
+  .btn.block{width:100%;}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;}
+  .modes{display:grid;gap:10px;margin-top:18px;}
+  .mode{display:flex;gap:12px;align-items:center;text-align:left;border:1.5px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--r-md);padding:14px 16px;transition:border-color .15s, box-shadow .15s;}
+  .mode:hover{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+  .mode .ic{font-size:26px;} .mode b{display:block;font-size:16px;} .mode span.d{display:block;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.35;}
+
+  ul.rules{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px;}
+  ul.rules li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted);}
+  ul.rules li b{display:block;color:var(--text);font-size:14px;}
+  ul.rules .ic{font-size:20px;line-height:1.2;}
+
+  details.guia{margin-top:16px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg);}
+  details.guia summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:14px;}
+  .gl{padding:0 14px 14px;display:grid;gap:8px;max-height:340px;overflow:auto;}
+  .gl div{font-size:13px;line-height:1.4;padding:8px 10px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);}
+  .gl b{display:block;font-size:14px;}
+  .gl span{color:var(--muted);}
+
+  /* HUD */
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+  .hearts{font-size:22px;letter-spacing:2px;min-width:80px;}
+  .score{font-size:22px;font-weight:700;}
+  .streak{font-size:13px;font-weight:700;padding:6px 10px;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);color:var(--muted);transition:all .2s;}
+  .streak.hot{color:var(--amber);border-color:var(--amber);background:var(--amber-soft);}
+  .streak.fire{color:var(--red);border-color:var(--red);background:var(--red-soft);}
+  .bars{display:grid;gap:6px;margin-bottom:14px;}
+  .bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;}
+  .bar i{display:block;height:100%;width:0;background:var(--blue);border-radius:99px;transition:width .3s linear;}
+  .bar.time i{background:var(--green);transition:width .25s linear;}
+  .bar.time.warn i{background:var(--amber);} .bar.time.over i{background:var(--red);}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600;}
+
+  .qtype{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--blue);}
+  .qtype.boss{color:var(--amber);}
+  .qtext{font-size:22px;font-weight:700;line-height:1.3;margin:8px 0 16px;text-wrap:balance;}
+  .qtext em{font-style:normal;color:var(--blue);}
+  .opts{display:grid;gap:10px;}
+  .opt{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--border);background:var(--bg);color:var(--text);border-radius:var(--r-md);padding:14px 16px;font-size:16px;font-weight:500;transition:all .15s;}
+  .opt .k{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface-2);color:var(--muted);}
+  .opt:hover:not([disabled]){border-color:var(--blue);background:var(--blue-soft);}
+  .opt.ok{border-color:var(--green);background:var(--green-soft);}
+  .opt.bad{border-color:var(--red);background:var(--red-soft);}
+  .opt.gone{opacity:.3;text-decoration:line-through;}
+  .opts.vf{grid-template-columns:1fr 1fr;} .opts.vf .opt{justify-content:center;font-weight:700;font-size:18px;}
+  .typed{display:flex;gap:8px;}
+  .typed input{flex:1;}
+  .fb{margin-top:16px;border-radius:var(--r-md);padding:14px 16px;font-size:14px;line-height:1.5;}
+  .fb.ok{background:var(--green-soft);border:1px solid var(--green);} .fb.bad{background:var(--red-soft);border:1px solid var(--red);}
+  .fb b{font-size:15px;}
+  .fb .pts{float:right;font-weight:800;font-family:"IBM Plex Mono",monospace;}
+  .fb .rule{display:block;margin-top:6px;color:var(--muted);}
+  .tools{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .tool{border:1.5px solid var(--border);background:var(--surface);color:var(--text);border-radius:99px;padding:8px 14px;font-size:13px;font-weight:600;}
+  .tool[disabled]{opacity:.4;cursor:not-allowed;}
+
+  /* final */
+  .big{font-size:56px;font-weight:800;font-family:"IBM Plex Mono",monospace;line-height:1;margin:6px 0;}
+  .rank{display:inline-block;margin-top:6px;font-weight:800;padding:6px 14px;border-radius:99px;background:var(--blue-soft);color:var(--blue);}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0;}
+  .stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;text-align:center;}
+  .stat b{display:block;font-size:22px;font-family:"IBM Plex Mono",monospace;} .stat span{font-size:12px;color:var(--muted);}
+  .rev{display:grid;gap:8px;margin-top:10px;}
+  .rev div{font-size:14px;line-height:1.4;padding:10px 12px;border-radius:var(--r-sm);background:var(--red-soft);border:1px solid var(--border);}
+  .rev b{display:block;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  .row .btn{flex:1;min-width:150px;}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:10;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .pop{animation:pop .35s ease;} @keyframes pop{0%{transform:scale(.97)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  .shake{animation:shake .35s;} @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  @media (prefers-reduced-motion: reduce){ .pop,.shake{animation:none;} .bar i{transition:none;} }
+  @media (max-width:420px){ .title{font-size:24px;} .qtext{font-size:20px;} }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <!-- INICIO -->
+  <section class="card" id="start">
+    <div class="eyebrow">Estadística con Hojas de cálculo · 8° Básico · Noviembre</div>
+    <h1 class="title">Racha de Datos 🔥</h1>
+    <p class="lead">Repasa el vocabulario del control: <b>conceptos y sus sinónimos</b>. Responde rápido, arma rachas y cuida tus vidas.</p>
+    <label for="nombre">Tu nombre (opcional)</label>
+    <input type="text" id="nombre" maxlength="40" autocomplete="off" placeholder="Nombre y apellido" />
+    <div class="modes">
+      <button class="mode" data-mode="normal"><span class="ic">🎯</span><div><b>Partida de 30 preguntas</b><span class="d">Repite los términos más importantes y suma otros nuevos. Unos 15 minutos.</span></div></button>
+      <button class="mode" data-mode="maraton"><span class="ic">♾️</span><div><b>Maratón</b><span class="d">Sigue hasta quedarte sin vidas. ¿Hasta dónde llegas?</span></div></button>
+    </div>
+    <ul class="rules">
+      <li><span class="ic">❤️</span><div><b>3 vidas</b>Una respuesta mala o el tiempo agotado quita una vida.</div></li>
+      <li><span class="ic">🔥</span><div><b>Rachas</b>3 aciertos seguidos: puntos x1,5 · 5: x2 · 8: x3. Cada 5 aciertos ganas un comodín 50/50 y cada 7, una vida.</div></li>
+      <li><span class="ic">⌨️</span><div><b>Reto escrito</b>Cada 5 preguntas debes escribir el concepto a partir de sus sinónimos. Vale el doble.</div></li>
+      <li><span class="ic">⏱️</span><div><b>Teclado</b>En el computador puedes responder con las teclas 1, 2, 3 y 4 (o V y F).</div></li>
+    </ul>
+    <details class="guia"><summary>📖 Guía de estudio (todos los conceptos y sinónimos)</summary><div class="gl" id="guia"></div></details>
+  </section>
+
+  <!-- JUEGO -->
+  <section class="card hidden" id="game" aria-live="polite">
+    <div class="hud">
+      <div class="hearts" id="hearts" aria-label="Vidas"></div>
+      <div class="streak" id="streak">Racha 0</div>
+      <div class="score mono" id="score">0</div>
+    </div>
+    <div class="bars">
+      <div class="bar"><i id="prog"></i></div>
+      <div class="bar time" id="timebar"><i id="timefill"></i></div>
+      <div class="meta"><span id="pcount">Pregunta 1</span><span id="tleft">20 s</span></div>
+    </div>
+    <div class="qtype" id="qtype"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="answer"></div>
+    <div id="feedback" class="hidden"></div>
+    <div class="tools">
+      <button class="tool" id="t5050" title="Quita dos opciones incorrectas">✂️ 50/50 <span id="n5050"></span></button>
+      <button class="tool" id="tskip" title="Cambia la pregunta sin perder vidas">⏭️ Saltar <span id="nskip"></span></button>
+    </div>
+    <div class="row hidden" id="nextrow"><button class="btn block" id="next">Siguiente ➜</button></div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="card hidden" id="end">
+    <div class="eyebrow" id="end-eyebrow">Fin de la partida</div>
+    <h2 class="title" id="end-name">¡Buen trabajo!</h2>
+    <div class="big" id="end-score">0</div>
+    <span class="rank" id="end-rank"></span>
+    <div class="stats">
+      <div class="stat"><b id="s-acc">0%</b><span>Precisión</span></div>
+      <div class="stat"><b id="s-streak">0</b><span>Mejor racha</span></div>
+      <div class="stat"><b id="s-best">0</b><span>Mejor puntaje de hoy</span></div>
+    </div>
+    <div id="rev-wrap">
+      <h3 style="font-size:16px">Conceptos para repasar</h3>
+      <div class="rev" id="rev"></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="again">🔁 Jugar de nuevo</button>
+      <button class="btn ghost" id="redo">🎯 Practicar mis errores</button>
+      <button class="btn ghost" id="copy">📋 Copiar resumen</button>
+    </div>
+    <div class="row"><button class="btn ghost block" id="home">Volver al inicio</button></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =====================  DATOS  =====================
+   Solo concepto + sinónimos del documento «Vocabulario de Estadística con Hojas de cálculo» (8° · noviembre).
+   No se usan definiciones: la prueba es de vocabulario. */
+const DATA = [
+  {c:"Población", s:["Universo", "Grupo total"]},
+  {c:"Muestra", s:["Subgrupo", "Parte del grupo"]},
+  {c:"Representativo", s:["Típico", "Característico"]},
+  {c:"Encuesta", s:["Sondeo", "Consulta"]},
+  {c:"Encuestado", s:["Participante", "Informante"]},
+  {c:"Pregunta de investigación", s:["Interrogante", "Problema del estudio"]},
+  {c:"Alternativa", s:["Opción", "Elección"]},
+  {c:"Dato numérico", s:["Valor cuantitativo", "Cifra"]},
+  {c:"Patrón", s:["Regularidad", "Comportamiento"]},
+  {c:"Asociación", s:["Relación", "Vínculo"]},
+  {c:"Causalidad", s:["Relación causa-efecto", "Causa directa"]},
+  {c:"Coincidencia", s:["Casualidad", "Concurrencia"]},
+  {c:"Estimación", s:["Aproximación", "Cálculo aproximado"]},
+  {c:"Evidencia", s:["Prueba", "Respaldo"]},
+  {c:"Conclusión", s:["Deducción", "Cierre del análisis"]},
+  {c:"Formulario", s:["Cuestionario en línea", "Ficha"]},
+  {c:"Respuesta", s:["Contestación", "Registro"]},
+  {c:"Vincular", s:["Conectar", "Enlazar"]},
+  {c:"Pestaña", s:["Hoja", "Página del libro"]},
+  {c:"Encabezado", s:["Título de columna", "Rótulo"]},
+  {c:"Limpieza de datos", s:["Depuración", "Corrección de errores"]},
+  {c:"Duplicado", s:["Repetido", "Copia"]},
+  {c:"Celda vacía", s:["Casilla en blanco", "Espacio sin dato"]},
+  {c:"Validación de datos", s:["Verificación", "Control de entrada"]},
+  {c:"Tabla dinámica", s:["Resumen cruzado", "Cruce de variables"]},
+  {c:"Gráfico de dispersión", s:["Nube de puntos", "Diagrama XY"]},
+  {c:"Línea de tendencia", s:["Recta de ajuste", "Línea guía"]},
+  {c:"Autocompletar", s:["Rellenar", "Copiar hacia abajo"]},
+  {c:"Formato condicional", s:["Resaltado automático", "Color según valor"]},
+  {c:"Dashboard", s:["Panel de control", "Tablero de resultados"]}
+];
+/* Grupos de conceptos emparentados: nunca se usan como distractores entre sí (evita preguntas ambiguas). */
+const GRUPOS = [["Población", "Muestra", "Representativo", "Encuesta", "Encuestado"], ["Encuesta", "Formulario", "Respuesta", "Alternativa", "Pregunta de investigación", "Encuestado"], ["Asociación", "Causalidad", "Coincidencia", "Patrón", "Evidencia", "Conclusión"], ["Gráfico de dispersión", "Línea de tendencia", "Patrón", "Asociación", "Tabla dinámica"], ["Limpieza de datos", "Duplicado", "Celda vacía", "Validación de datos", "Encabezado"], ["Pestaña", "Formulario", "Vincular", "Respuesta", "Encabezado"], ["Tabla dinámica", "Dashboard", "Formato condicional", "Autocompletar", "Dato numérico"], ["Estimación", "Dato numérico", "Muestra", "Conclusión"]];
+/* Términos que más se repiten en esta partida y los distractores que pueden acompañarlos. */
+const BASE = {"Encuestado": ["Dato numérico", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Estimación", "Conclusión", "Vincular", "Pestaña", "Limpieza de datos", "Duplicado", "Celda vacía", "Validación de datos", "Tabla dinámica", "Línea de tendencia", "Autocompletar", "Formato condicional", "Dashboard"], "Alternativa": ["Población", "Representativo", "Dato numérico", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Estimación", "Conclusión", "Vincular", "Encabezado", "Limpieza de datos", "Duplicado", "Celda vacía", "Validación de datos", "Tabla dinámica", "Gráfico de dispersión", "Línea de tendencia", "Autocompletar", "Formato condicional", "Dashboard"], "Dato numérico": ["Población", "Representativo", "Encuesta", "Encuestado", "Alternativa", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Evidencia", "Formulario", "Respuesta", "Vincular", "Pestaña", "Encabezado", "Limpieza de datos", "Celda vacía", "Validación de datos", "Gráfico de dispersión"], "Patrón": ["Población", "Muestra", "Representativo", "Encuesta", "Encuestado", "Pregunta de investigación", "Alternativa", "Dato numérico", "Estimación", "Formulario", "Respuesta", "Vincular", "Pestaña", "Limpieza de datos", "Celda vacía", "Validación de datos", "Autocompletar", "Formato condicional", "Dashboard"], "Coincidencia": ["Población", "Representativo", "Encuesta", "Encuestado", "Pregunta de investigación", "Alternativa", "Dato numérico", "Estimación", "Formulario", "Respuesta", "Vincular", "Pestaña", "Limpieza de datos", "Duplicado", "Celda vacía", "Validación de datos", "Tabla dinámica", "Gráfico de dispersión", "Línea de tendencia", "Autocompletar", "Formato condicional", "Dashboard"], "Estimación": ["Población", "Encuesta", "Encuestado", "Pregunta de investigación", "Alternativa", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Evidencia", "Respuesta", "Vincular", "Pestaña", "Encabezado", "Duplicado", "Celda vacía", "Validación de datos", "Tabla dinámica", "Gráfico de dispersión", "Línea de tendencia", "Autocompletar", "Formato condicional", "Dashboard"], "Conclusión": ["Representativo", "Encuesta", "Encuestado", "Pregunta de investigación", "Alternativa", "Formulario", "Respuesta", "Vincular", "Pestaña", "Encabezado", "Limpieza de datos", "Duplicado", "Validación de datos", "Tabla dinámica", "Línea de tendencia", "Autocompletar", "Formato condicional", "Dashboard"], "Vincular": ["Muestra", "Representativo", "Encuesta", "Encuestado", "Pregunta de investigación", "Alternativa", "Dato numérico", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Estimación", "Evidencia", "Conclusión", "Limpieza de datos", "Duplicado", "Validación de datos", "Tabla dinámica", "Gráfico de dispersión", "Línea de tendencia", "Formato condicional", "Dashboard"], "Validación de datos": ["Población", "Muestra", "Representativo", "Encuestado", "Pregunta de investigación", "Alternativa", "Dato numérico", "Patrón", "Asociación", "Causalidad", "Coincidencia", "Estimación", "Evidencia", "Conclusión", "Formulario", "Respuesta", "Vincular", "Tabla dinámica", "Gráfico de dispersión", "Autocompletar", "Formato condicional", "Dashboard"], "Tabla dinámica": ["Población", "Representativo", "Encuestado", "Pregunta de investigación", "Alternativa", "Causalidad", "Coincidencia", "Estimación", "Evidencia", "Conclusión", "Formulario", "Respuesta", "Vincular", "Pestaña", "Encabezado", "Limpieza de datos", "Duplicado", "Celda vacía", "Validación de datos"]};
+
+/* =====================  UTILIDADES  ===================== */
+const $ = s => document.querySelector(s);
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9ñ/ ]/g," ").replace(/\s+/g," ").trim();
+const STOP = new Set(["de","la","el","los","las","del","y","en","o","a","un","una"]);
+const roots = s => norm(s).split(" ").filter(w=>w.length>3 && !STOP.has(w)).map(w=>w.slice(0,5));
+const shareRoot = (a,b) => { const rb=roots(b); return roots(a).some(r=>rb.includes(r)); };
+const byC = Object.fromEntries(DATA.map(d=>[d.c,d]));
+const related = (a,b) => a===b || GRUPOS.some(g=>g.includes(a)&&g.includes(b));
+function lev(a,b){ const m=a.length,n=b.length; const d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]); for(let j=0;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[m][n]; }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800); }
+function show(id){ document.querySelectorAll("section.card").forEach(s=>s.classList.add("hidden")); $(id).classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); }
+
+/* =====================  GENERADOR DE PREGUNTAS  ===================== */
+/* Sinónimo distractor: de un concepto no emparentado, sin compartir raíz con el término ni con la respuesta. */
+function distractorSyns(c, avoidTexts, n){
+  const pool = DATA.filter(d=>!related(d.c,c) && (!BASE[c] || BASE[c].includes(d.c)));
+  const out=[], used=new Set();
+  for (const d of shuffle(pool)){
+    const s = pick(d.s);
+    if (avoidTexts.some(t=>shareRoot(s,t))) continue;
+    if (used.has(d.c)) continue;
+    used.add(d.c); out.push(s);
+    if (out.length===n) break;
+  }
+  return out;
+}
+function qSinonimo(c){ // ¿Cuál es un sinónimo de «c»?
+  const d=byC[c], ok=pick(d.s);
+  const dist=distractorSyns(c,[c,...d.s],3);
+  return { kind:"mc", c, label:"Sinónimo", text:`¿Cuál es un sinónimo de <em>«${esc(c)}»</em>?`,
+    options:shuffle([ok,...dist]), answer:ok, explain:`«${c}» = ${d.s.join(" · ")}` };
+}
+function qInverso(c){ // «s» es sinónimo de…
+  const d=byC[c], s=pick(d.s);
+  const pool=DATA.filter(x=>!related(x.c,c) && (!BASE[c] || BASE[c].includes(x.c)) && !shareRoot(x.c,s) && !x.s.includes(s) && !x.s.some(t=>shareRoot(t,s)) && !d.s.some(t=>shareRoot(x.c,t)));
+  const dist=shuffle(pool).slice(0,3).map(x=>x.c);
+  return { kind:"mc", c, label:"Concepto", text:`<em>«${esc(s)}»</em> es sinónimo de…`,
+    options:shuffle([c,...dist]), answer:c, explain:`«${c}» = ${d.s.join(" · ")}` };
+}
+function qVF(c){ // «X» y «Y» son sinónimos.
+  const d=byC[c], verdad=Math.random()<0.5;
+  const a = Math.random()<0.5 ? c : pick(d.s);
+  let b, ok=verdad;
+  if (verdad){ const grupo=[c,...d.s].filter(x=>x!==a); b=pick(grupo); }
+  else { b=distractorSyns(c,[c,...d.s],1)[0]; if(!b){ b=pick(d.s); ok=true; } }
+  const pair = Math.random()<0.5 ? [a,b] : [b,a];
+  return { kind:"vf", c, label:"Verdadero o falso", text:`<em>«${esc(pair[0])}»</em> y <em>«${esc(pair[1])}»</em> son sinónimos.`,
+    options:["Verdadero","Falso"], answer: ok?"Verdadero":"Falso", explain:`«${c}» = ${d.s.join(" · ")}` };
+}
+function qEscrito(c){ // reto escrito: escribe el concepto
+  const d=byC[c];
+  // Elegir un sinónimo que no contenga el nombre exacto de otro concepto (evita pistas contradictorias)
+  const libres=d.s.filter(s=>!DATA.some(x=>x.c!==c && norm(s).includes(norm(x.c))));
+  const s=pick(libres.length?libres:d.s);
+  return { kind:"typed", c, label:"Reto escrito · vale el doble", boss:true,
+    text:`Escribe el concepto que tiene como sinónimo <em>«${esc(s)}»</em>.`, answer:c, explain:`«${c}» = ${d.s.join(" · ")}` };
+}
+function conceptoSeguro(c){ return !!c; }
+function makeQuestion(c, idx){
+  if ((idx+1)%5===0){ // reto escrito cada 5 preguntas
+    return qEscrito(c);
+  }
+  const r=Math.random();
+  return r<0.5 ? qSinonimo(c) : qInverso(c);
+}
+
+/* =====================  ESTADO Y JUEGO  ===================== */
+const LIM_MC = 20, LIM_TYPED = 35;
+let G = null, bestScore = 0, lastFallos = {};
+function mult(st){ return st>=8?3:st>=5?2:st>=3?1.5:1; }
+
+
+/* Mazo de la partida: 21 de 30 preguntas (70 %) con los términos base, el resto con términos nuevos. */
+function armarMazo(){
+  const nucleo = Object.keys(BASE);
+  const otros = DATA.map(d=>d.c).filter(c=>!BASE[c]);
+  const base = [...nucleo, ...nucleo, pick(nucleo)];          // 21
+  const nuevos = shuffle(otros).slice(0,9);                   // 9
+  let m = shuffle([...base, ...nuevos]);
+  for (let t=0; t<300; t++){
+    if (!m.some((c,i)=>i>0 && c===m[i-1])) break;
+    m = shuffle(m);
+  }
+  return m;
+}
+
+function newGame(mode, concepts){
+  G = { mode, deck:shuffle(concepts||DATA.map(d=>d.c)), i:0, total: mode==="normal"?30 : mode==="errores"?Math.min(10,(concepts||[]).length*2||10) : 60,
+        lives:3, score:0, streak:0, best:0, ok:0, err:0, h5050:1, skips:1, fallos:{}, q:null, locked:false, t0:0, tick:null, limit:LIM_MC, nombre:($("#nombre").value||"").trim() };
+  if (mode==="errores") G.deck = shuffle([...concepts,...concepts]).slice(0,G.total);
+  if (mode==="normal") G.deck = armarMazo();
+  show("#game"); nextQuestion();
+}
+function renderHud(){
+  $("#hearts").textContent = "❤️".repeat(G.lives) + "🖤".repeat(Math.max(0,3-G.lives));
+  $("#score").textContent = G.score.toLocaleString("es-CL");
+  const s=$("#streak"); const m=mult(G.streak);
+  s.textContent = G.streak>=3 ? `🔥 Racha ${G.streak} · x${String(m).replace(".",",")}` : `Racha ${G.streak}`;
+  s.className = "streak" + (G.streak>=8?" fire":G.streak>=3?" hot":"");
+  $("#n5050").textContent = "×"+G.h5050; $("#nskip").textContent = "×"+G.skips;
+  $("#t5050").disabled = G.h5050<=0 || G.locked || !G.q || G.q.kind!=="mc";
+  $("#tskip").disabled = G.skips<=0 || G.locked;
+  const total = G.mode==="maraton" ? null : G.total;
+  $("#pcount").textContent = total ? `Pregunta ${Math.min(G.i+1,total)} de ${total}` : `Pregunta ${G.i+1}`;
+  $("#prog").style.width = total ? (G.i/total*100)+"%" : Math.min(100,G.i/60*100)+"%";
+}
+function nextQuestion(){
+  if (G.lives<=0 || (G.mode!=="maraton" && G.i>=G.total) || (G.mode==="maraton" && G.i>=60)) return endGame();
+  let c;
+  if (G.mode==="maraton"){ if(!G.pool||!G.pool.length) G.pool=shuffle(DATA.map(d=>d.c)); c=G.pool.pop(); }
+  else c = G.deck[G.i % G.deck.length];
+  G.q = makeQuestion(c, G.i); G.locked=false;
+  drawQuestion();
+}
+function drawQuestion(){
+  const q=G.q, box=$("#answer");
+  $("#qtype").textContent = q.label; $("#qtype").className="qtype"+(q.boss?" boss":"");
+  $("#qtext").innerHTML = q.text;
+  $("#feedback").classList.add("hidden"); $("#nextrow").classList.add("hidden");
+  if (q.kind==="typed"){
+    box.innerHTML = `<div class="typed"><input type="text" id="tin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe aquí…" aria-label="Tu respuesta"><button class="btn" id="tok">Responder</button></div>`;
+    $("#tok").onclick=()=>answerTyped(); $("#tin").addEventListener("keydown",e=>{ if(e.key==="Enter") answerTyped(); }); setTimeout(()=>{ const t=$("#tin"); if(t) t.focus(); },50);
+    G.limit=LIM_TYPED;
+  } else {
+    box.innerHTML = `<div class="opts ${q.kind==="vf"?"vf":""}">` + q.options.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${q.kind==="vf"?(i?"F":"V"):(i+1)}</span><span>${esc(o)}</span></button>`).join("") + `</div>`;
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answerMC(+b.dataset.i));
+    G.limit=LIM_MC;
+  }
+  box.classList.remove("pop"); void box.offsetWidth; box.classList.add("pop");
+  G.t0=Date.now(); clearInterval(G.tick); G.tick=setInterval(tick,200); tick(); renderHud();
+}
+function tick(){
+  if (!G||G.locked) return;
+  const left = Math.max(0, G.limit - (Date.now()-G.t0)/1000);
+  $("#timefill").style.width = (left/G.limit*100)+"%";
+  const tb=$("#timebar"); tb.classList.toggle("warn", left<=8 && left>4); tb.classList.toggle("over", left<=4);
+  $("#tleft").textContent = Math.ceil(left)+" s";
+  if (left<=0) resolve(false, "time");
+}
+function answerMC(i){
+  if (G.locked) return;
+  const val=G.q.options[i], ok = val===G.q.answer;
+  document.querySelectorAll("#answer .opt").forEach((b,j)=>{
+    b.disabled=true; if (G.q.options[j]===G.q.answer) b.classList.add("ok"); else if (j===i) b.classList.add("bad");
+  });
+  resolve(ok, ok?"":"wrong");
+}
+function answerTyped(){
+  if (G.locked) return;
+  const raw=$("#tin").value; if(!norm(raw)) { toast("Escribe una respuesta"); return; }
+  const a=norm(raw), b=norm(G.q.answer);
+  const ok = a===b || (b.length>=6 && lev(a,b)<=1);
+  $("#tin").disabled=true; $("#tok").disabled=true;
+  resolve(ok, ok?(a!==b?"casi":""):"wrong");
+}
+function resolve(ok, why){
+  if (G.locked) return; G.locked=true; clearInterval(G.tick);
+  const q=G.q, left=Math.max(0, G.limit-(Date.now()-G.t0)/1000);
+  let gained=0, html="";
+  if (ok){
+    G.ok++; G.streak++; G.best=Math.max(G.best,G.streak);
+    const base = q.kind==="typed" ? 200 : 100, bonus=Math.ceil(left/G.limit*50);
+    gained = Math.round((base+bonus)*mult(G.streak)); G.score+=gained;
+    let extra="";
+    if (G.streak%5===0){ G.h5050=Math.min(3,G.h5050+1); extra+=" ✂️ +1 comodín 50/50."; }
+    if (G.streak%7===0 && G.lives<3){ G.lives++; extra+=" ❤️ +1 vida."; }
+    html=`<div class="fb ok"><span class="pts">+${gained}</span><b>${why==="casi"?"¡Casi perfecto! Se acepta.":"¡Correcto!"}</b>${why==="casi"?` Se escribe «${esc(q.answer)}».`:""}<span class="rule">${esc(q.explain)}${extra}</span></div>`;
+  } else {
+    G.err++; G.streak=0; G.lives--; G.fallos[q.c]=(G.fallos[q.c]||0)+1;
+    if (q.kind==="mc") document.querySelectorAll("#answer .opt").forEach((b,j)=>{ b.disabled=true; if(q.options[j]===q.answer) b.classList.add("ok"); });
+    const titulo = why==="time" ? "⏰ Se acabó el tiempo" : "Esa no era";
+    html=`<div class="fb bad"><b>${titulo}.</b> Respuesta: <b>${esc(q.answer)}</b><span class="rule">${esc(q.explain)}</span></div>`;
+    $("#game").classList.remove("shake"); void $("#game").offsetWidth; $("#game").classList.add("shake");
+  }
+  G.i++; renderHud();
+  const fb=$("#feedback"); fb.innerHTML=html; fb.classList.remove("hidden");
+  const fin = G.lives<=0 || (G.mode!=="maraton" && G.i>=G.total) || (G.mode==="maraton" && G.i>=60);
+  $("#next").textContent = fin ? "Ver resultados ➜" : "Siguiente ➜";
+  $("#nextrow").classList.remove("hidden"); $("#next").focus();
+}
+function use5050(){
+  if (G.locked||G.h5050<=0||G.q.kind!=="mc") return;
+  const btns=[...document.querySelectorAll("#answer .opt")];
+  const malas=btns.filter((b,j)=>G.q.options[j]!==G.q.answer);
+  shuffle(malas).slice(0,2).forEach(b=>{ b.disabled=true; b.classList.add("gone"); });
+  G.h5050--; renderHud();
+}
+function useSkip(){
+  if (G.locked||G.skips<=0) return;
+  G.skips--; clearInterval(G.tick);
+  if (G.mode==="maraton"){ /* toma otra del mazo */ } else { G.deck.splice(G.i,0,G.deck[(G.i+7)%G.deck.length]); G.deck.splice(G.i+1,1); }
+  G.q = makeQuestion(G.mode==="maraton" ? (G.pool&&G.pool.length?G.pool.pop():pick(DATA).c) : G.deck[G.i], G.i);
+  toast("Pregunta cambiada"); drawQuestion();
+}
+
+/* =====================  FINAL  ===================== */
+function rango(acc){ return acc>=90?"🏆 Maestro/a de Datos":acc>=75?"📊 Analista":acc>=55?"📈 Aprendiz de Datos":"🧭 Explorador/a en práctica"; }
+function endGame(){
+  clearInterval(G.tick);
+  const n=G.ok+G.err, acc = n? Math.round(G.ok/n*100):0;
+  bestScore=Math.max(bestScore,G.score); lastFallos=G.fallos;
+  $("#end-name").textContent = (G.nombre? G.nombre+", ":"") + (G.lives>0?"¡terminaste!":"¡te quedaste sin vidas!");
+  $("#end-eyebrow").textContent = G.mode==="maraton"?"Fin del maratón":G.mode==="errores"?"Fin de la práctica de errores":"Fin de la partida";
+  $("#end-score").textContent=G.score.toLocaleString("es-CL"); $("#end-rank").textContent=rango(acc);
+  $("#s-acc").textContent=acc+"%"; $("#s-streak").textContent=G.best; $("#s-best").textContent=bestScore.toLocaleString("es-CL");
+  const f=Object.entries(G.fallos).sort((a,b)=>b[1]-a[1]);
+  $("#rev-wrap").classList.toggle("hidden", !f.length);
+  $("#rev").innerHTML = f.map(([c,k])=>`<div><b>${esc(c)} <span style="font-weight:500;color:var(--muted)">· fallaste ${k} ${k>1?"veces":"vez"}</span></b>${esc(byC[c].s.join(" · "))}</div>`).join("");
+  $("#redo").classList.toggle("hidden", !f.length);
+  G.resumen = `${G.nombre||"Sin nombre"} · Racha de Datos 8° nov. · ${G.score} pts · ${acc}% de precisión · mejor racha ${G.best}` + (f.length?` · Por repasar: ${f.map(x=>x[0]).join(", ")}`:"");
+  show("#end");
+}
+
+/* =====================  EVENTOS  ===================== */
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>newGame(b.dataset.mode));
+$("#t5050").onclick=use5050; $("#tskip").onclick=useSkip; $("#next").onclick=nextQuestion;
+$("#again").onclick=()=>newGame(G.mode==="errores"?"normal":G.mode);
+$("#redo").onclick=()=>newGame("errores", Object.keys(lastFallos));
+$("#home").onclick=()=>{ clearInterval(G&&G.tick); show("#start"); };
+$("#copy").onclick=async()=>{ try{ await navigator.clipboard.writeText(G.resumen); toast("Resumen copiado"); }catch(e){ toast("No se pudo copiar"); } };
+document.addEventListener("keydown",e=>{
+  if (!G || $("#game").classList.contains("hidden")) return;
+  if (e.target && e.target.tagName==="INPUT") return;
+  if (G.locked){ if(e.key==="Enter"){ e.preventDefault(); nextQuestion(); } return; }
+  if (G.q.kind==="mc" && /^[1-4]$/.test(e.key)) answerMC(+e.key-1);
+  else if (G.q.kind==="vf"){ const k=e.key.toLowerCase(); if(k==="v"||k==="1") answerMC(0); else if(k==="f"||k==="2") answerMC(1); }
+});
+$("#guia").innerHTML = DATA.map(d=>`<div><b>${esc(d.c)}</b><span>${esc(d.s.join(" · "))}</span></div>`).join("");
+</script>
+</body>
+</html>
